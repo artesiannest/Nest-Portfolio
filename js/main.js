@@ -117,25 +117,11 @@
   }
   document.addEventListener('click', e => { const gallery = e.target.closest('[data-gallery]'); if (gallery) openGallery(gallery.dataset.gallery, gallery); const research = e.target.closest('[data-research]'); if (research) openResearch(research.dataset.research, research); });
 
-  // Explicitly labelled local simulation, with no API or account data.
-  $('#ai-scenario').innerHTML = data.scenarios.map(s => `<option value="${s.id}">${escapeHTML(s.label)}</option>`).join('');
-  function renderScenario() { const s = data.scenarios.find(x => x.id === $('#ai-scenario').value); $('#ai-title').textContent = s.title; $('#ai-output').textContent = s.output; }
-  $('#ai-scenario').addEventListener('change', renderScenario);
-  renderScenario();
-  // Motion preference can be paused and honours changes to system settings.
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  let motionPaused = false;
-  try { motionPaused = localStorage.getItem('nest-motion') === 'paused'; } catch (_) {}
   function updateMotion() {
-    document.documentElement.classList.toggle('motion-paused', motionPaused);
+    document.documentElement.classList.remove('motion-paused');
     document.documentElement.classList.toggle('motion-reduced', reducedMotion.matches);
-    const running = !motionPaused && !reducedMotion.matches;
-    $('#motion-toggle').setAttribute('aria-pressed', String(running));
-    $('#motion-toggle').setAttribute('aria-label', reducedMotion.matches ? 'Animasi nonaktif sesuai pengaturan perangkat' : running ? 'Jeda animasi' : 'Aktifkan animasi');
-    $('#motion-toggle').title = $('#motion-toggle').getAttribute('aria-label');
-    $('#motion-toggle').disabled = reducedMotion.matches;
   }
-  $('#motion-toggle').addEventListener('click', () => { motionPaused = !motionPaused; try { localStorage.setItem('nest-motion', motionPaused ? 'paused' : 'on'); } catch (_) {} updateMotion(); });
   if (reducedMotion.addEventListener) reducedMotion.addEventListener('change', updateMotion);
   updateMotion();
   $$('.focus-strip span').forEach((el, i) => el.style.setProperty('--item-delay', `${i * 80}ms`));
@@ -147,7 +133,6 @@
     const cardChanges = new MutationObserver(observeCards);
     [$('#projects'), $('#research')].forEach(container => cardChanges.observe(container, {childList:true}));
     if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) { document.documentElement.classList.add('js-motion'); const reveal = new IntersectionObserver(entries => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); reveal.unobserve(e.target); } }), {threshold:0.08}); $$('.reveal').forEach(el => reveal.observe(el)); }
-    const observer = new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting) { $$('#navigation a').forEach(a => { const active = a.hash === '#' + e.target.id; a.classList.toggle('active', active); if (active) a.setAttribute('aria-current', 'location'); else a.removeAttribute('aria-current'); }); } }); }, {rootMargin:'-15% 0px -65% 0px', threshold:0}); $$('main>section[id]').filter(s => s.id !== 'ai').forEach(s => observer.observe(s));
   }
   function updateBackTop() { $('.back-top').hidden = window.scrollY < 600; }
   window.addEventListener('scroll', updateBackTop, {passive:true}); updateBackTop();
