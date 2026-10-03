@@ -54,12 +54,12 @@ window.PORTFOLIO_DATA = {
   "experience": [
     {
       "period": "Januari 2022–Mei 2026",
-      "role": "IT Project Manager",
+      "role": "IT Project Manager & Web Programmer",
       "company": "Simple Code Studio",
-      "description": "Mendirikan dan mengelola studio pengembangan web. Menangani komunikasi klien, perencanaan proyek, koordinasi tim, pengelolaan scope, serta pengawasan kualitas desain dan delivery."
+      "description": "Mengelola studio pengembangan web serta melakukan pengembangan web maupun aplikasi berbasis web. Menangani komunikasi klien, perencanaan proyek, koordinasi tim, pengelolaan scope, serta pengawasan kualitas desain dan delivery. Melakukan pengembangan web maupun aplikasi berbasis web yang inovatif, kreatif, dan keren kayak saya"
     },
     {
-      "period": "Juni 2024–Desember 2025",
+      "period": "Juni 2024–Desember 2025",kan
       "role": "Junior Programmer",
       "company": "APacead Team SG",
       "description": "Mengerjakan task pengembangan perangkat lunak untuk proyek klien, berkolaborasi dengan tim, serta membangun dan mengiterasi solusi melalui alur Agile dan sprint."
