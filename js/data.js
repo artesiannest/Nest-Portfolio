@@ -65,7 +65,7 @@ window.PORTFOLIO_DATA = {
       "description": "Mengelola studio pengembangan web serta melakukan pengembangan web maupun aplikasi berbasis web. Menangani komunikasi klien, perencanaan proyek, koordinasi tim, pengelolaan scope, serta pengawasan kualitas desain dan delivery. Melakukan pengembangan web maupun aplikasi berbasis web yang inovatif, kreatif, dan keren kayak saya"
     },
     {
-      "period": "Juni 2024-Desember 2025",kan
+      "period": "Juni 2024-Desember 2025",
       "role": "Junior Programmer",
       "company": "APacead Team SG",
       "description": "Mengerjakan task pengembangan perangkat lunak untuk proyek klien, berkolaborasi dengan tim, serta membangun dan mengiterasi solusi melalui alur Agile dan sprint."
