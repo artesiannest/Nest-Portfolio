@@ -609,50 +609,6 @@ window.PORTFOLIO_DATA = {
       "status": "Naskah riset akademik"
     }
   ],
-  "scenarios": [
-    {
-      "id": "accounsaas",
-      "label": "Keuangan · AccounSaaS",
-      "title": "Memahami transaksi dengan lebih cepat",
-      "idea": "Ringkasan transaksi dan penjelasan data keuangan.",
-      "output": "Saya dapat membantu merangkum transaksi per kategori dan menjelaskan perubahan pemasukan atau pengeluaran berdasarkan periode yang dipilih. Untuk menghasilkan analisis, sistem perlu menyediakan data transaksi yang relevan."
-    },
-    {
-      "id": "sikola",
-      "label": "Sekolah · SIKOLA",
-      "title": "Menemukan informasi administratif",
-      "idea": "Bantuan pencarian informasi administratif sekolah.",
-      "output": "Saya dapat membantu menemukan informasi siswa, guru, atau rekap absensi melalui pertanyaan sehari-hari. Informasi yang ditampilkan perlu mengikuti hak akses pengguna dan data yang tersedia."
-    },
-    {
-      "id": "sioptik",
-      "label": "Optik · SiOptik",
-      "title": "Mencari informasi produk yang relevan",
-      "idea": "Bantuan pencarian informasi produk.",
-      "output": "Saya dapat membantu mencari produk berdasarkan kategori, stok, dan informasi katalog. Untuk pertanyaan mengenai lensa, saya dapat menampilkan spesifikasi produk yang tercatat sebagai bahan diskusi dengan petugas optik."
-    },
-    {
-      "id": "rental-pro",
-      "label": "Rental · Rental Pro",
-      "title": "Merangkum kegiatan dan maintenance",
-      "idea": "Ringkasan operasional rental dan jadwal maintenance.",
-      "output": "Saya dapat membantu merangkum transaksi penyewaan, kendaraan yang sedang digunakan, dan jadwal maintenance berdasarkan catatan sistem. Pengguna dapat meninjau data sumber sebelum menentukan tindakan."
-    },
-    {
-      "id": "kosthub",
-      "label": "Kost · KostHub",
-      "title": "Memantau pembayaran dan permintaan penghuni",
-      "idea": "Ringkasan pembayaran dan permintaan maintenance.",
-      "output": "Saya dapat membantu merangkum status pembayaran dan permintaan maintenance per kamar. Ringkasan perlu mengacu pada catatan pembayaran dan tiket maintenance terkini yang boleh diakses pengguna."
-    },
-    {
-      "id": "lms",
-      "label": "Pembelajaran · LMS",
-      "title": "Mendampingi belajar dari materi",
-      "idea": "Tutor berbasis materi dan bantuan pembelajaran.",
-      "output": "Saya dapat membantu menjelaskan materi yang dipilih, menyusun ringkasan, dan memberikan pertanyaan latihan. Jawaban perlu merujuk pada materi kursus agar pengguna dapat memeriksa sumbernya."
-    }
-  ],
   "education": [
     {
       "level": "S1 Sistem Informasi",
