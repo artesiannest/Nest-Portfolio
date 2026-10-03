@@ -53,19 +53,25 @@ window.PORTFOLIO_DATA = {
   ],
   "experience": [
     {
-      "period": "Januari 2022–Mei 2026",
+      "period": "Mei 2026-Sekarang",
+      "role": "Freelance Web Programmer",
+      "company": "Freelancer",
+      "description": "Mengembangkan website dan aplikasi berbasis web sesuai kebutuhan klien, mulai dari analisis kebutuhan, perancangan alur sistem, implementasi fitur, hingga pengujian dan pemeliharaan. Berkomunikasi langsung dengan klien untuk menyepakati ruang lingkup, memberikan pembaruan progres, dan menyesuaikan solusi dengan proses bisnis pengguna"
+    },
+    {
+      "period": "Januari 2022-Mei 2026",
       "role": "IT Project Manager & Web Programmer",
       "company": "Simple Code Studio",
       "description": "Mengelola studio pengembangan web serta melakukan pengembangan web maupun aplikasi berbasis web. Menangani komunikasi klien, perencanaan proyek, koordinasi tim, pengelolaan scope, serta pengawasan kualitas desain dan delivery. Melakukan pengembangan web maupun aplikasi berbasis web yang inovatif, kreatif, dan keren kayak saya"
     },
     {
-      "period": "Juni 2024–Desember 2025",kan
+      "period": "Juni 2024-Desember 2025",kan
       "role": "Junior Programmer",
       "company": "APacead Team SG",
       "description": "Mengerjakan task pengembangan perangkat lunak untuk proyek klien, berkolaborasi dengan tim, serta membangun dan mengiterasi solusi melalui alur Agile dan sprint."
     },
     {
-      "period": "September 2020–Maret 2021",
+      "period": "September 2020-Maret 2021",
       "role": "Information System Intern",
       "company": "Universitas Kristen Satya Wacana",
       "description": "Mendukung pengelolaan website fakultas dan koordinasi pembelajaran daring, termasuk penjadwalan kelas virtual dan perbaikan alur kerja digital."
