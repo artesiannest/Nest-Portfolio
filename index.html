@@ -1,39 +1,131 @@
-<!DOCTYPE html>
+<!-- Bubble perkenalan di bawah kursi Nestiara -->
+<style>
+  .room-stage .room-introduction.nest-under-chair {
+    position: absolute !important;
+    left: 61% !important;
+    bottom: 1% !important;
+    top: auto !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    margin: 0 !important;
+    width: max-content !important;
+    max-width: 38% !important;
+    height: auto !important;
+    flex-basis: auto !important;
+    z-index: 8 !important;
+    display: block !important;
+    color: var(--room-ink, #142126);
+    text-decoration: none;
+  }
 
-<html data-theme="dark" lang="id">
-<head>
-<meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/>
-<title>Kamar Nest — Portfolio Nestiara</title>
-<meta content="Portfolio Nest: pengembangan web, pengelolaan proyek IT, enam sistem digital, dan karya akademik Sistem Informasi." name="description"/>
-<meta content="Nest — Digital Systems &amp; Research" property="og:title"/><meta content="Membangun sistem digital yang lebih membantu pengguna. Jelajahi portfolio sistem dan karya akademik Nestiara Lidya Kakihary." property="og:description"/><meta content="website" property="og:type"/><meta content="https://nestiara-digital-portfolio.bright-otter-1915.chatgpt.site" property="og:url"/>
-<meta content="#0b1217" name="theme-color"/><link href="assets/images/profile/favicon.svg" rel="icon" type="image/svg+xml"/><link href="css/style.css" rel="stylesheet"/><link href="css/room.css?v=20261009-games-1" rel="stylesheet"/>
-<script>try{document.documentElement.dataset.theme=localStorage.getItem('nest-theme')||'dark'}catch(e){}</script>
-<script defer="" src="js/data.js"></script><script defer="" src="js/cms-config.js"></script><script defer="" src="js/cms-api.js"></script><script defer="" src="js/cms-bootstrap.js?v=20261009-games-1"></script>
-</head>
-<body>
-<a class="skip" href="#main">Langsung ke konten</a>
-<header class="header"><a aria-label="Nest, beranda" class="brand" href="#beranda">nest<span class="brand-dot">.</span><span class="brand-label">DIGITAL PORTFOLIO</span></a>
-<nav aria-label="Navigasi utama" id="navigation"><a class="active" href="#beranda">Kamar</a><a href="#tentang">Tentang</a><a href="#pengalaman">Pengalaman</a><a href="#portfolio">Portfolio</a><a href="#riset">Riset</a><a href="#kontak">Kontak</a><a href="#games">Games</a></nav>
-<div class="header-actions"><button aria-label="Aktifkan mode terang" class="icon-button" id="theme" title="Ganti tema">◐</button><button aria-controls="navigation" aria-expanded="false" aria-label="Buka menu" class="icon-button mobile-menu" id="menu">☰</button></div></header>
-<main id="main"><section aria-label="Kamar interaktif Nestiara" class="room-home" data-view="beranda" id="beranda">
-<div class="room-welcome"><div><p class="eyebrow">A LITTLE ROOM, A WORLD OF IDEAS</p><h1>Masuk ke dunia <em>Nest.</em></h1></div><p>Klik benda di kamar untuk mengenal saya,<br/>menjelajahi karya, atau memulai percakapan.</p></div>
-<div class="room-frame"><div class="room-stage" id="room-stage">
-<img alt="Kamar kerja kartun bernuansa malam, dengan mading portfolio di kiri, rak buku riset di kanan, serta meja kerja di tengah." class="room-background" fetchpriority="high" height="941" src="assets/images/room/room-background.png" width="1672"/>
-<div aria-hidden="true" class="room-ambience"></div><div aria-hidden="true" class="lamp-glow"></div><div aria-hidden="true" class="room-dust"><span></span><span></span><span></span><span></span><span></span></div>
-<a aria-label="Buka portfolio dari mading kamar" class="room-hotspot board-hotspot" href="#portfolio" id="board-hotspot"><span aria-hidden="true" class="board-previews" id="board-previews"></span><span class="hotspot-label"><span class="hotspot-marker"></span>Mading Portfolio<small id="room-portfolio-count">Memuat jumlah sistem…</small></span></a>
-<a aria-label="Buka riset akademik dari rak buku" class="room-hotspot research-hotspot" href="#riset" id="research-hotspot"><span class="hotspot-label"><span class="hotspot-marker"></span>Riset Akademik<small>4 riset terbaru</small></span></a>
-<a aria-label="Berkenalan dengan Nestiara, buka tentang dan pengalaman" class="character-link" href="#tentang" id="character-hotspot"><img alt="Karakter kartun perempuan berambut panjang, berkacamata, memakai hoodie hitam dan celana panjang putih, duduk di depan laptop." class="room-character" height="1024" src="assets/images/room/nestiara-character.png" width="1024"/></a>
-<a aria-label="Buka kontak melalui handphone berdering" class="phone-link" href="#kontak" id="phone-hotspot"><span aria-hidden="true" class="phone-ripple"></span><img alt="Handphone di atas meja, berdering untuk membuka kontak." class="room-phone" height="1024" src="assets/images/room/ringing-phone.png" width="1024"/><span class="phone-label">Hubungi Nest<span class="call-caption">Ada percakapan baru…</span></span></a>
-<div aria-hidden="true" class="room-corner-note">NEST'S CREATIVE SPACE<span>Make yourself at home.</span></div>
-</div><div class="room-status"><span>Jelajahi lewat benda-benda di kamar</span><div><button aria-pressed="false" class="room-sound" id="room-sound">Suara: Nonaktif</button></div><a class="room-introduction" href="#tentang"><span class="speech-bubble">Berkenalan dengan<br/><strong>Nestiara</strong><span aria-hidden="true" class="bubble-dots"><i></i><i></i><i></i></span></span></a></div></div>
-<nav aria-label="Pilihan ruang" class="room-dock"><a href="#portfolio"><span>01</span><strong>Mading Portfolio</strong><small>Sistem yang saya kerjakan</small></a><a href="#riset"><span>02</span><strong>Rak Riset</strong><small>Karya akademik</small></a><a href="#tentang"><span>03</span><strong>Kenalan dengan Nest</strong><small>Tentang &amp; pengalaman</small></a><a href="#kontak"><span>04</span><strong>Handphone</strong><small>Mari mengobrol</small></a><a href="#games"><span>05</span><strong>Games</strong><small>Mainkan game buatan Nest</small></a></nav>
-</section><div class="room-page" data-view="tentang" hidden="" id="view-tentang"><div class="page-toolbar"><a class="return-room" href="#beranda">Kembali ke Kamar</a><span>Tentang &amp; Pengalaman</span></div><section class="hero section" id="about-intro">
-<div class="hero-copy"><p class="eyebrow">NESTIARA LIDYA KAKIHARY <span> / </span> NEST</p><p class="profession">Information Systems Professional<br/>IT Project Manager · Web Developer</p><h1>Membangun sistem digital yang <em>lebih membantu</em> pengguna.</h1><p class="hero-description">Saya Nest. Saya menghubungkan kebutuhan pengguna, proses bisnis, dan teknologi melalui pengembangan web dan pengelolaan proyek IT. Saya tertarik menambahkan fitur AI yang membantu pengguna memahami informasi dan menyelesaikan pekerjaan.</p><div class="actions"><a class="button primary" href="#portfolio">Lihat Portfolio</a><a class="text-link" download="" href="assets/documents/resume-nestiara.pdf">Unduh Resume</a></div></div>
-<div aria-label="Fokus Nest: kebutuhan pengguna, pengembangan sistem, riset, dan minat integrasi AI" class="hero-art"><div class="art-top"><span>THE WAY I CONNECT</span><span>01 / 04</span></div><div class="orbit"><div class="orbit-ring ring-one"></div><div class="orbit-ring ring-two"></div><div class="orbit-core"><span>N</span><small>nest.</small></div><div class="orbit-label label-user"><span>01</span>Kebutuhan<br/>pengguna</div><div class="orbit-label label-dev"><span>02</span>Pengembangan<br/>sistem</div><div class="orbit-label label-research"><span>03</span>Riset &amp;<br/>analisis</div><div class="orbit-label label-ai"><span>04</span>Minat<br/>integrasi AI</div></div><div class="art-bottom"><span>PEOPLE × PROCESS × TECHNOLOGY</span><span class="small-mark">✳</span></div></div>
-<div class="focus-strip"><span>Web Development</span><span>IT Project Management</span><span>Information Systems Research</span><span>AI Integration Interest</span></div>
-</section><section class="section about reveal" id="tentang"><div class="section-heading"><p class="eyebrow">01 / TENTANG SAYA</p><h2>Dari kebutuhan,<br/>menjadi <em>solusi.</em></h2></div><div class="about-content"><p class="large-text">Sistem yang baik dimulai dari memahami orang yang menggunakannya.</p><p>Pengalaman saya mencakup pengembangan aplikasi web, komunikasi klien, koordinasi tim, dan pengelolaan ruang lingkup proyek. Saya memadukan kemampuan teknis dan analisis proses bisnis untuk menerjemahkan kebutuhan menjadi alur kerja digital yang mudah digunakan.</p><div class="education"><article><span class="eyebrow">PENDIDIKAN SARJANA</span><h3>S1 Sistem Informasi</h3><p>Universitas Kristen Satya Wacana · 2017–2021</p><strong>IPK 3,84 / 4,00</strong><p class="small">Tugas akhir: evaluasi kepuasan pengguna perangkat IoT menggunakan PIECES Framework.</p></article><article><span class="eyebrow">STUDI LANJUTAN</span><h3>Magister Sistem Informasi</h3><p>Universitas Kristen Satya Wacana</p><span class="tag">Mahasiswa</span></article></div><div class="skills-grid" id="skills"></div></div></section><section class="section reveal" id="pengalaman"><div class="section-heading horizontal"><div><p class="eyebrow">02 / PENGALAMAN</p><h2>Teknis bertemu<br/><em>kolaborasi.</em></h2></div><a class="button secondary" href="assets/documents/resume-nestiara.pdf" rel="noopener noreferrer" target="_blank">Lihat Resume</a></div><div class="timeline" id="experience"></div><div class="certification"><h3>Belajar &amp; berkembang</h3><div class="cert-grid" id="certificates"></div></div></section></div><div class="room-page" data-view="portfolio" hidden="" id="view-portfolio"><div class="page-toolbar"><a class="return-room" href="#beranda">Kembali ke Kamar</a><span>Portfolio Sistem</span></div><section class="section reveal" id="portfolio"><div class="section-heading horizontal"><div><p class="eyebrow">03 / PORTFOLIO SISTEM</p><h2>Beragam kebutuhan.<br/><em>Enam sistem.</em></h2></div><p class="section-intro">Keuangan, sekolah, retail, rental, hunian, dan pembelajaran. Jelajahi tampilan serta alur sistem melalui screenshot asli.</p></div><div class="portfolio-toolbar"><label class="search-label"><span>Cari sistem</span><input autocomplete="off" id="search" placeholder="Nama, kategori, atau fitur…" type="search"/></label><label class="category-label"><span>Kategori</span><select id="category"><option value="">Semua kategori</option></select></label><p aria-live="polite" class="small" id="result-count"></p></div><div class="project-grid" id="projects"></div><p class="empty" hidden="" id="empty-projects">Tidak ada sistem yang cocok. Coba kata kunci atau kategori lain.</p></section></div><div class="room-page" data-view="riset" hidden="" id="view-riset"><div class="page-toolbar"><a class="return-room" href="#beranda">Kembali ke Kamar</a><span>Riset Akademik</span></div><section class="section research reveal" id="riset"><div class="section-heading horizontal"><div><p class="eyebrow">05 / RISET &amp; KARYA AKADEMIK</p><h2>Rasa ingin tahu,<br/><em>menjadi kajian.</em></h2></div><p class="section-intro">Empat riset terbaru: keamanan smart home IoT, kualitas MyKlinik.id, metaverse, dan kelayakan HRIS Akar Rasa.</p></div><div aria-label="Filter topik riset" class="filter-row" id="research-filters" role="group"></div><div class="research-list" id="research"></div></section></div><div class="room-page" data-view="kontak" hidden="" id="view-kontak"><div class="page-toolbar"><a class="return-room" href="#beranda">Kembali ke Kamar</a><span>Kontak</span></div><section class="section contact reveal" id="kontak"><p class="eyebrow">07 / MULAI PERCAKAPAN</p><h2>Ada ide yang ingin<br/><em>kita wujudkan?</em></h2><p>Saya terbuka untuk diskusi proyek, peluang kerja, dan kolaborasi di bidang sistem informasi.</p><div class="actions" id="contact-actions"></div><div class="contact-resume"><a href="assets/documents/resume-nestiara.pdf" rel="noopener noreferrer" target="_blank">Lihat Resume</a><span> / </span><a download="" href="assets/documents/resume-nestiara.pdf">Unduh Resume</a></div></section></div><div class="room-page" data-view="games" hidden="" id="view-games"><div class="page-toolbar"><a class="return-room" href="#beranda">Kembali ke Kamar</a><span>Games</span></div><section class="section reveal" id="games"><div class="section-heading horizontal"><div><p class="eyebrow">GAMES / MAIN &amp; JELAJAHI</p><h2>Waktu untuk<br/><em>bermain.</em></h2></div><p class="section-intro">Jelajahi game yang saya buat. Pilih game dan buka tautannya untuk bermain.</p></div><div class="portfolio-toolbar"><label class="search-label"><span>Cari game</span><input id="game-search" placeholder="Nama, kategori, atau deskripsi…" type="search"/></label><label class="category-label"><span>Kategori</span><select id="game-category"><option value="">Semua kategori</option></select></label><p aria-live="polite" class="small" id="game-result-count"></p></div><div class="project-grid" id="game-projects"></div><p class="empty" hidden="" id="empty-games">Belum ada game yang cocok.</p></section></div></main><footer><a class="brand" href="#beranda">nest<span class="brand-dot">.</span></a><p>Nestiara Lidya Kakihary · Indonesia</p><span>Systems with purpose.</span></footer>
-<a aria-label="Kembali ke atas" class="back-top" href="#beranda">↑</a>
-<dialog aria-labelledby="gallery-title" class="gallery-dialog" id="gallery-dialog"><div class="dialog-header"><div><p class="eyebrow">GALERI SCREENSHOT</p><h2 id="gallery-title"></h2></div><button aria-label="Tutup galeri" class="icon-button close-dialog">✕</button></div><div class="image-stage"><button aria-label="Screenshot sebelumnya" class="gallery-arrow" id="previous-image">‹</button><img alt="" id="full-image" src=""/><button aria-label="Screenshot berikutnya" class="gallery-arrow" id="next-image">›</button></div><div class="gallery-meta"><p id="gallery-caption"></p><span aria-live="polite" id="gallery-number"></span></div><div aria-label="Pilih screenshot" class="thumbnails" id="gallery-thumbnails"></div></dialog>
-<dialog aria-labelledby="research-title" class="research-dialog" id="research-dialog"><div class="dialog-header"><p class="eyebrow">RINGKASAN KARYA</p><button aria-label="Tutup ringkasan" class="icon-button close-dialog">✕</button></div><div id="research-detail"></div></dialog>
-<noscript><p class="noscript">Aktifkan JavaScript untuk menampilkan portfolio dan galeri. Resume tetap dapat diunduh melalui tombol di atas.</p></noscript>
-</body></html>
+  .room-stage .nest-under-chair .speech-bubble {
+    position: static !important;
+    display: block !important;
+    transform: none !important;
+    animation: none !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 8px 16px !important;
+    border-radius: 12px !important;
+    background: var(--room-paper, #fff4df);
+    border: 1px solid #e3c497;
+    box-shadow: 0 4px 16px #06131f30;
+    font-size: clamp(0.6rem, 1vw, 0.9rem) !important;
+    line-height: 1.3 !important;
+    text-align: center;
+    white-space: normal;
+  }
+
+  .room-stage .nest-under-chair .speech-bubble strong {
+    font-size: 1.15em !important;
+  }
+
+  .room-stage .nest-under-chair .speech-bubble::after,
+  .room-stage .nest-under-chair .bubble-dots {
+    display: none !important;
+  }
+
+  .room-stage .nest-under-chair:focus-visible {
+    outline: 3px solid #f6c987;
+    outline-offset: 4px;
+    border-radius: 12px;
+  }
+
+  @media (max-width: 640px) {
+    .room-stage .room-introduction.nest-under-chair {
+      left: 61% !important;
+      bottom: 1% !important;
+      max-width: 40% !important;
+    }
+
+    .room-stage .nest-under-chair .speech-bubble {
+      padding: 5px 8px !important;
+      font-size: 0.6rem !important;
+      border-radius: 8px !important;
+    }
+  }
+</style>
+
+<script>
+(function () {
+  'use strict';
+
+  function moveIntroductionUnderChair() {
+    const stage = document.querySelector('.room-stage');
+    if (!stage) return;
+
+    let introduction = document.querySelector(
+      'a.room-introduction'
+    );
+
+    // Mendukung versi lama yang bubble-nya masih di karakter.
+    if (!introduction) {
+      const oldBubble = document.querySelector(
+        '#character-hotspot .speech-bubble'
+      );
+
+      introduction = document.createElement('a');
+      introduction.className = 'room-introduction';
+
+      if (oldBubble) {
+        introduction.appendChild(oldBubble);
+      } else {
+        const bubble = document.createElement('span');
+        bubble.className = 'speech-bubble';
+
+        bubble.appendChild(
+          document.createTextNode('Berkenalan dengan')
+        );
+
+        bubble.appendChild(document.createElement('br'));
+
+        const name = document.createElement('strong');
+        name.textContent = 'Nestiara';
+        bubble.appendChild(name);
+
+        introduction.appendChild(bubble);
+      }
+    }
+
+    introduction.href = '#tentang';
+    introduction.classList.add('nest-under-chair');
+    introduction.setAttribute(
+      'aria-label',
+      'Berkenalan dengan Nestiara, buka Tentang dan Pengalaman'
+    );
+
+    // Memindahkan elemen yang sama, bukan membuat duplikat.
+    stage.appendChild(introduction);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener(
+      'DOMContentLoaded',
+      moveIntroductionUnderChair,
+      { once: true }
+    );
+  } else {
+    moveIntroductionUnderChair();
+  }
+})();
+</script>
