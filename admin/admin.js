@@ -1,13 +1,14 @@
 (function () {
   'use strict';
 
-  const $ = s => document.querySelector(s);
-  const clone = v => JSON.parse(JSON.stringify(v));
+  const $ = selector => document.querySelector(selector);
+  const clone = value => JSON.parse(JSON.stringify(value));
 
   const labels = {
     profile: 'Profil & Kontak',
     experience: 'Pengalaman',
-    systems: 'Portfolio Sistem',games: 'Games',
+    systems: 'Portfolio Sistem',
+    games: 'Games',
     research: 'Riset Akademik',
     education: 'Pendidikan',
     skills: 'Keahlian',
@@ -15,7 +16,6 @@
   };
 
   const schemas = {
- games:{id:'Kode unik game',title:'Nama game',category:'Kategori',summary:'Deskripsi singkat',accessStatus:'Status akses game',publicUrl:'Tautan game'},
     profile: {
       name: 'Nama lengkap',
       nickname: 'Nama panggilan',
@@ -32,41 +32,37 @@
       linkedinUrl: 'LinkedIn',
       githubUrl: 'GitHub'
     },
+
     experience: {
       period: 'Periode',
       role: 'Jabatan',
       company: 'Perusahaan / klien',
       description: 'Tanggung jawab'
     },
-    education: {
-      level: 'Jenjang / program',
-      institution: 'Institusi',
-      period: 'Periode',
-      gpa: 'IPK',
-      thesis: 'Tugas akhir',
-      status: 'Status'
-    },
-    skills: {
-      title: 'Kelompok keahlian',
-      items: 'Daftar keahlian (satu per baris)'
-    },
-    certificates: {
-      title: 'Nama sertifikasi',
-      issuer: 'Penerbit',
-      date: 'Tanggal'
-    },
+
     systems: {
       id: 'Kode unik sistem',
       title: 'Nama sistem',
       category: 'Kategori',
       summary: 'Deskripsi singkat',
-      cover: 'Gambar sampul',
+      cover: 'Gambar sampul sistem',
       accessStatus: 'Status akses sistem',
       publicUrl: 'Tautan Public Access',
       documentationUrl: 'Dokumentasi Google Docs',
       demoUrl: 'Demo',
       sourceUrl: 'Source code'
     },
+
+    games: {
+      id: 'Kode unik game',
+      title: 'Nama game',
+      category: 'Kategori',
+      summary: 'Deskripsi singkat',
+      cover: 'Gambar sampul game',
+      accessStatus: 'Status akses game',
+      publicUrl: 'Tautan game'
+    },
+
     research: {
       id: 'Kode unik riset',
       title: 'Judul riset',
@@ -79,28 +75,76 @@
       detail: 'Ringkasan lengkap',
       documentUrl: 'Dokumen riset',
       status: 'Status'
+    },
+
+    education: {
+      level: 'Jenjang / program',
+      institution: 'Institusi',
+      period: 'Periode',
+      gpa: 'IPK',
+      thesis: 'Tugas akhir',
+      status: 'Status'
+    },
+
+    skills: {
+      title: 'Kelompok keahlian',
+      items: 'Daftar keahlian (satu per baris)'
+    },
+
+    certificates: {
+      title: 'Nama sertifikasi',
+      issuer: 'Penerbit',
+      date: 'Tanggal'
     }
   };
 
-  const nested = {
+  const nestedSchemas = {
     gallery: {
       src: 'Gambar screenshot',
       caption: 'Keterangan'
     },
+
     supports: {
       label: 'Nama dokumen pendukung',
       url: 'Dokumen'
     }
   };
 
-  const urls = new Set([
-    'resumeUrl', 'cover', 'src', 'documentUrl', 'url',
-    'website', 'linkedinUrl', 'githubUrl',
-    'documentationUrl', 'demoUrl', 'sourceUrl', 'publicUrl'
+  const urlKeys = new Set([
+    'resumeUrl',
+    'cover',
+    'src',
+    'documentUrl',
+    'url',
+    'website',
+    'linkedinUrl',
+    'githubUrl',
+    'documentationUrl',
+    'demoUrl',
+    'sourceUrl',
+    'publicUrl'
   ]);
 
   const uploadKeys = new Set([
-    'resumeUrl', 'cover', 'src', 'documentUrl', 'url'
+    'resumeUrl',
+    'cover',
+    'src',
+    'documentUrl',
+    'url'
+  ]);
+
+  const imageKeys = new Set(['cover', 'src']);
+  const arrayKeys = new Set(['authors', 'items']);
+
+  const longKeys = new Set([
+    'description',
+    'heroDescription',
+    'aboutDescription',
+    'summary',
+    'detail',
+    'focus',
+    'method',
+    'thesis'
   ]);
 
   let content = null;
@@ -108,91 +152,133 @@
   let section = 'profile';
   let dirty = false;
   let busy = false;
+  let pendingUploads = 0;
 
   const draftKey = 'nest-portfolio-admin-draft';
 
+  function el(tag, text, className) {
+    const node = document.createElement(tag);
+
+    if (text != null) {
+      node.textContent = text;
+    }
+
+    if (className) {
+      node.className = className;
+    }
+
+    return node;
+  }
+
+  function button(text, handler, className) {
+    const node = el('button', text, className);
+
+    node.type = 'button';
+    node.addEventListener('click', handler);
+
+    return node;
+  }
+
   function notice(message, error = false) {
-    $('#notice').textContent = message;
-    $('#notice').classList.toggle('error', error);
+    const node = $('#notice');
+
+    node.textContent = message;
+    node.classList.toggle('error', error);
   }
 
   function status() {
     $('#state').textContent =
       'Versi ' + revision + ' · ' +
-      (dirty
-        ? 'Ada perubahan belum diterbitkan'
-        : 'Konten sesuai publikasi terakhir');
+      (
+        dirty
+          ? 'Ada perubahan belum diterbitkan'
+          : 'Konten sesuai publikasi terakhir'
+      );
   }
 
   function changed() {
     dirty = true;
     status();
+    renderStats();
   }
 
-  function el(tag, text, klass) {
-    const node = document.createElement(tag);
-    if (text) node.textContent = text;
-    if (klass) node.className = klass;
-    return node;
-  }
-
-  function button(text, fn, klass) {
-    const b = el('button', text, klass);
-    b.type = 'button';
-    b.addEventListener('click', fn);
-    return b;
-  }
-
-  async function task(fn) {
-    if (busy) return;
-    busy = true;
-
-    document.querySelectorAll(
-      '.toolbar button,#login-button,.history button'
-    ).forEach(b => b.disabled = true);
-
-    try {
-      await fn();
-    } catch (e) {
-      notice(
-        e.name === 'AbortError'
-          ? 'Koneksi terlalu lama. Coba lagi.'
-          : e.message,
-        true
-      );
-    } finally {
-      busy = false;
-      document.querySelectorAll(
-        '.toolbar button,#login-button,.history button'
-      ).forEach(b => b.disabled = false);
+  function normalize(data) {
+    if (!data || typeof data !== 'object') {
+      throw new Error('Data konten tidak tersedia.');
     }
+
+    // Mendukung konten lama yang belum memiliki Games.
+    if (!Array.isArray(data.games)) {
+      data.games = [];
+    }
+
+    data.games.forEach(game => {
+      if (game.cover == null) {
+        game.cover = '';
+      }
+
+      if (game.accessStatus == null) {
+        game.accessStatus = 'hidden';
+      }
+
+      if (game.publicUrl == null) {
+        game.publicUrl = '';
+      }
+    });
+
+    return data;
   }
 
   function safeUrl(value) {
     if (!value) return true;
+    if (typeof value !== 'string') return false;
 
     if (
       /^assets\/[\w./ -]+$/.test(value) &&
       !value.includes('..')
-    ) return true;
+    ) {
+      return true;
+    }
 
     try {
-      const u = new URL(value);
-      return /^https?:$/.test(u.protocol) &&
-        !u.username && !u.password;
+      const parsed = new URL(value);
+
+      return (
+        /^https?:$/.test(parsed.protocol) &&
+        !parsed.username &&
+        !parsed.password
+      );
     } catch (_) {
       return false;
     }
   }
 
+  // assets/ adalah path dari root website, bukan folder admin.
+  function previewUrl(value) {
+    const url = String(value || '').trim();
+
+    if (!url || !safeUrl(url)) return '';
+
+    if (url.startsWith('assets/')) {
+      return new URL('../' + url, location.href).href;
+    }
+
+    return url;
+  }
+
   function validate(data) {
-    if(!Array.isArray(data.games))data.games=[];
-    if (!data.profile || !data.profile.name.trim()) {
+    normalize(data);
+
+    if (
+      !data.profile ||
+      !String(data.profile.name || '').trim()
+    ) {
       throw new Error('Nama profil wajib diisi.');
     }
 
     for (const key of Object.keys(labels)) {
       if (key === 'profile') continue;
+
       if (!Array.isArray(data[key])) {
         throw new Error(
           'Data ' + labels[key] + ' harus berupa daftar.'
@@ -205,7 +291,8 @@
 
       for (const item of data[key]) {
         if (
-          !/^[a-zA-Z0-9_-]+$/.test(item.id) ||
+          !item ||
+          !/^[a-zA-Z0-9_-]+$/.test(item.id || '') ||
           ids.has(item.id)
         ) {
           throw new Error(
@@ -216,7 +303,7 @@
 
         ids.add(item.id);
 
-        if (!item.title.trim()) {
+        if (!String(item.title || '').trim()) {
           throw new Error(
             'Judul ' + labels[key] + ' wajib diisi.'
           );
@@ -224,11 +311,10 @@
       }
     }
 
-    for(const g of data.games){if(g.accessStatus==='public'&&(!/^https?:\/\//i.test(g.publicUrl||'')||!safeUrl(g.publicUrl)))throw new Error('Isi tautan game yang valid untuk '+g.title);}
-  function walk(obj) {
+    function walk(obj) {
       for (const [key, value] of Object.entries(obj)) {
         if (
-          urls.has(key) &&
+          urlKeys.has(key) &&
           typeof value === 'string' &&
           !safeUrl(value)
         ) {
@@ -246,6 +332,23 @@
 
     walk(data);
 
+    for (const key of ['systems', 'games']) {
+      for (const item of data[key]) {
+        if (
+          item.accessStatus === 'public' &&
+          (
+            !/^https?:\/\//i.test(item.publicUrl || '') ||
+            !safeUrl(item.publicUrl)
+          )
+        ) {
+          throw new Error(
+            'Isi tautan Public access yang valid untuk ' +
+            item.title + '.'
+          );
+        }
+      }
+    }
+
     for (const system of data.systems) {
       if (
         !Array.isArray(system.gallery) ||
@@ -260,36 +363,32 @@
       for (const image of system.gallery) {
         if (!image.src) {
           throw new Error(
-            'Gambar galeri ' + system.title + ' belum diisi.'
+            'Gambar galeri ' + system.title +
+            ' belum diisi.'
           );
         }
       }
 
       if (system.documentationUrl) {
-        const u = new URL(system.documentationUrl);
+        let parsed;
+
+        try {
+          parsed = new URL(system.documentationUrl);
+        } catch (_) {
+          throw new Error(
+            'Dokumentasi sistem harus berupa tautan Google Docs.'
+          );
+        }
 
         if (
-          u.protocol !== 'https:' ||
-          u.hostname !== 'docs.google.com' ||
-          !u.pathname.startsWith('/document/')
+          parsed.protocol !== 'https:' ||
+          parsed.hostname !== 'docs.google.com' ||
+          !parsed.pathname.startsWith('/document/')
         ) {
           throw new Error(
             'Dokumentasi sistem harus berupa tautan Google Docs.'
           );
         }
-      }
-
-      if (
-        system.accessStatus === 'public' &&
-        (
-          !/^https?:\/\//i.test(system.publicUrl || '') ||
-          !safeUrl(system.publicUrl)
-        )
-      ) {
-        throw new Error(
-          'Isi Tautan Public Access yang valid untuk ' +
-          system.title
-        );
       }
     }
 
@@ -305,23 +404,52 @@
     }
   }
 
+  function syncDisabled() {
+    document.querySelectorAll(
+      '.toolbar button,#login-button,.history button'
+    ).forEach(node => {
+      node.disabled = busy || pendingUploads > 0;
+    });
+  }
+
+  async function task(handler) {
+    if (busy || pendingUploads > 0) return;
+
+    busy = true;
+    syncDisabled();
+
+    try {
+      await handler();
+    } catch (error) {
+      notice(
+        error.name === 'AbortError'
+          ? 'Koneksi terlalu lama. Coba lagi.'
+          : error.message,
+        true
+      );
+    } finally {
+      busy = false;
+      syncDisabled();
+    }
+  }
+
   function field(obj, key, label) {
+    const wrap = el('label', label);
+
     if (key === 'accessStatus') {
-      const wrap = el('label', label);
       const select = el('select');
 
-      for (const [value, text] of [
+      [
         ['hidden', 'Sistem disembunyikan'],
         ['public', 'Public access']
-      ]) {
+      ].forEach(([value, text]) => {
         const option = el('option', text);
         option.value = value;
         select.append(option);
-      }
+      });
 
-      select.value = obj[key] === 'public'
-        ? 'public'
-        : 'hidden';
+      select.value =
+        obj[key] === 'public' ? 'public' : 'hidden';
 
       select.addEventListener('change', () => {
         obj[key] = select.value;
@@ -332,72 +460,198 @@
       return wrap;
     }
 
-    const wrap = el('label', label);
-    const array = Array.isArray(obj[key]);
+    const isArray =
+      arrayKeys.has(key) || Array.isArray(obj[key]);
 
-    const long = array || [
-      'description', 'heroDescription', 'aboutDescription',
-      'summary', 'detail', 'focus', 'method', 'thesis'
-    ].includes(key);
+    const isLong = isArray || longKeys.has(key);
 
-    if (long) wrap.classList.add('wide');
-
-    const input = el(long ? 'textarea' : 'input');
-    input.value = array
-      ? obj[key].join('\n')
-      : (obj[key] ?? '');
-
-    if (!long) input.type = 'text';
-
-    if (key === 'publicUrl') {
-      input.placeholder = 'https://alamat-sistem-kamu.com';
+    if (isLong || key === 'cover') {
+      wrap.classList.add('wide');
     }
 
+    const input = el(isLong ? 'textarea' : 'input');
+
+    if (!isLong) {
+      input.type = 'text';
+    }
+
+    input.value = isArray
+      ? (
+          Array.isArray(obj[key])
+            ? obj[key].join('\n')
+            : ''
+        )
+      : (obj[key] ?? '');
+
+    if (key === 'publicUrl') {
+      input.placeholder =
+        'https://alamat-website-atau-game.com';
+    }
+
+    if (key === 'cover') {
+      input.placeholder =
+        'Unggah gambar atau masukkan URL sampul';
+    }
+
+    let refreshPreview = () => {};
+
     input.addEventListener('input', () => {
-      obj[key] = array
-        ? input.value.split('\n')
-            .map(v => v.trim())
+      obj[key] = isArray
+        ? input.value
+            .split('\n')
+            .map(value => value.trim())
             .filter(Boolean)
         : input.value;
 
       changed();
+      refreshPreview();
     });
 
     if (uploadKeys.has(key)) {
       const row = el('div', null, 'upload-row');
       row.append(input);
 
-      const pick = el('input');
-      pick.type = 'file';
-      pick.accept = '.png,.jpg,.jpeg,.webp,.pdf,.docx,.pptx';
-      pick.hidden = true;
+      const picker = el('input');
+      picker.type = 'file';
+      picker.hidden = true;
 
-      const b = button('Unggah', () => pick.click());
+      picker.accept = imageKeys.has(key)
+        ? '.png,.jpg,.jpeg,.webp'
+        : '.png,.jpg,.jpeg,.webp,.pdf,.docx,.pptx';
 
-      pick.addEventListener('change', async () => {
-        if (!pick.files[0]) return;
-        b.disabled = true;
+      const uploadButton = button(
+        'Unggah',
+        () => {
+          if (busy || pendingUploads > 0) return;
+          picker.click();
+        }
+      );
+
+      picker.addEventListener('change', async () => {
+        const file = picker.files[0];
+        if (!file) return;
+
+        if (
+          imageKeys.has(key) &&
+          !/\.(png|jpe?g|webp)$/i.test(file.name)
+        ) {
+          notice(
+            'Pilih gambar PNG, JPG, JPEG, atau WEBP.',
+            true
+          );
+
+          picker.value = '';
+          return;
+        }
+
+        if (file.size > 20 * 1024 * 1024) {
+          notice(
+            'Ukuran file maksimal 20 MB.',
+            true
+          );
+
+          picker.value = '';
+          return;
+        }
+
+        pendingUploads++;
+        syncDisabled();
+
+        uploadButton.disabled = true;
+        uploadButton.textContent = 'Mengunggah…';
+        input.disabled = true;
 
         try {
-          const url = await NestCMS.upload(pick.files[0]);
+          const url = await NestCMS.upload(file);
+
           obj[key] = url;
           input.value = url;
+
           changed();
+          refreshPreview();
+
           notice(
-            'File berhasil diunggah. Terbitkan untuk memperbarui website.'
+            'File berhasil diunggah. Klik Terbitkan ' +
+            'untuk memperbarui website.'
           );
-        } catch (e) {
-          notice(e.message, true);
+        } catch (error) {
+          notice(error.message, true);
         } finally {
-          b.disabled = false;
-          pick.value = '';
+          pendingUploads--;
+          syncDisabled();
+
+          uploadButton.disabled = false;
+          uploadButton.textContent = 'Unggah';
+          input.disabled = false;
+          picker.value = '';
         }
       });
 
-      row.append(b, pick);
+      row.append(uploadButton, picker);
       wrap.append(row);
     } else {
       wrap.append(input);
+    }
+
+    if (imageKeys.has(key)) {
+      const preview = el('img');
+      preview.alt = 'Preview gambar';
+      preview.hidden = true;
+
+      Object.assign(preview.style, {
+        display: 'none',
+        width: '100%',
+        maxWidth: '480px',
+        maxHeight: '260px',
+        objectFit: 'contain',
+        marginTop: '12px',
+        borderRadius: '8px',
+        background: '#172a35'
+      });
+
+      const help = el(
+        'small',
+        key === 'cover'
+          ? 'Sampul akan tampil pada kartu di website setelah diterbitkan.'
+          : 'Preview screenshot.'
+      );
+
+      help.style.display = 'block';
+      help.style.marginTop = '8px';
+
+      refreshPreview = () => {
+        const url = previewUrl(obj[key]);
+
+        if (!url) {
+          preview.hidden = true;
+          preview.style.display = 'none';
+          preview.removeAttribute('src');
+          return;
+        }
+
+        preview.hidden = false;
+        preview.style.display = 'block';
+
+        if (preview.getAttribute('src') !== url) {
+          preview.src = url;
+        }
+      };
+
+      preview.addEventListener('error', () => {
+        preview.hidden = true;
+        preview.style.display = 'none';
+
+        help.textContent =
+          'Preview gagal dimuat. Periksa URL atau unggah gambar baru.';
+      });
+
+      preview.addEventListener('load', () => {
+        help.textContent =
+          'Gambar siap. Klik Terbitkan untuk menampilkannya di website.';
+      });
+
+      wrap.append(preview, help);
+      refreshPreview();
     }
 
     return wrap;
@@ -413,35 +667,61 @@
     return grid;
   }
 
+  function move(list, index, delta) {
+    if (busy || pendingUploads > 0) return;
+
+    const next = index + delta;
+
+    if (next < 0 || next >= list.length) return;
+
+    [list[index], list[next]] =
+      [list[next], list[index]];
+
+    changed();
+    render();
+  }
+
   function nestedEditor(item, key) {
-    if (!Array.isArray(item[key])) item[key] = [];
+    if (!Array.isArray(item[key])) {
+      item[key] = [];
+    }
 
     const panel = el('div', null, 'wide');
-    panel.append(el(
-      'h3',
-      key === 'gallery'
-        ? 'Screenshot galeri'
-        : 'Dokumen pendukung'
-    ));
 
-    item[key].forEach((obj, i) => {
+    panel.append(
+      el(
+        'h3',
+        key === 'gallery'
+          ? 'Screenshot galeri'
+          : 'Dokumen pendukung'
+      )
+    );
+
+    item[key].forEach((obj, index) => {
       const box = el('div', null, 'nested');
       const head = el('div', null, 'entry-head');
-
-      head.append(el(
-        'h3',
-        (key === 'gallery' ? 'Screenshot ' : 'Dokumen ') +
-        (i + 1)
-      ));
-
       const actions = el('div', null, 'entry-actions');
 
+      head.append(
+        el(
+          'h3',
+          (
+            key === 'gallery'
+              ? 'Screenshot '
+              : 'Dokumen '
+          ) + (index + 1)
+        )
+      );
+
       actions.append(
-        button('↑', () => move(item[key], i, -1)),
-        button('↓', () => move(item[key], i, 1)),
+        button('↑', () => move(item[key], index, -1)),
+        button('↓', () => move(item[key], index, 1)),
+
         button('Hapus', () => {
+          if (busy || pendingUploads > 0) return;
+
           if (confirm('Hapus item ini dari draft?')) {
-            item[key].splice(i, 1);
+            item[key].splice(index, 1);
             changed();
             render();
           }
@@ -449,47 +729,53 @@
       );
 
       head.append(actions);
-      box.append(head, form(obj, nested[key]));
+      box.append(head, form(obj, nestedSchemas[key]));
       panel.append(box);
     });
 
-    panel.append(button(
-      key === 'gallery'
-        ? '+ Screenshot'
-        : '+ Dokumen pendukung',
-      () => {
-        item[key].push(
-          key === 'gallery'
-            ? { src: '', caption: '' }
-            : { label: '', url: '' }
-        );
+    panel.append(
+      button(
+        key === 'gallery'
+          ? '+ Screenshot'
+          : '+ Dokumen pendukung',
 
-        changed();
-        render();
-      }
-    ));
+        () => {
+          if (busy || pendingUploads > 0) return;
+
+          item[key].push(
+            key === 'gallery'
+              ? { src: '', caption: '' }
+              : { label: '', url: '' }
+          );
+
+          changed();
+          render();
+        }
+      )
+    );
 
     return panel;
-  }
-
-  function move(list, index, delta) {
-    const next = index + delta;
-    if (next < 0 || next >= list.length) return;
-
-    [list[index], list[next]] = [list[next], list[index]];
-    changed();
-    render();
   }
 
   function newItem(key) {
     const item = {};
 
-    for (const field of Object.keys(schemas[key])) {
-      item[field] = '';
+    for (const fieldKey of Object.keys(schemas[key])) {
+      item[fieldKey] = '';
     }
 
-    if(key==='games')Object.assign(item,{id:'game-'+Date.now(),accessStatus:'hidden'});
-    if (key === 'skills') item.items = [];
+    if (key === 'skills') {
+      item.items = [];
+    }
+
+    if (key === 'games') {
+      Object.assign(item, {
+        id: 'game-' + Date.now(),
+        cover: '',
+        accessStatus: 'hidden',
+        publicUrl: ''
+      });
+    }
 
     if (key === 'systems') {
       Object.assign(item, {
@@ -514,54 +800,88 @@
     return item;
   }
 
+  function renderStats() {
+    if (!content) return;
+
+    const stats = $('#stats');
+    stats.replaceChildren();
+
+    [
+      ['Sistem', content.systems?.length || 0],
+      ['Games', content.games?.length || 0],
+      ['Riset', content.research?.length || 0],
+      ['Pengalaman', content.experience?.length || 0]
+    ].forEach(([label, value]) => {
+      const stat = el('div', null, 'stat');
+
+      stat.append(
+        el('strong', String(value)),
+        el('span', label)
+      );
+
+      stats.append(stat);
+    });
+  }
+
   function render() {
-    if(!Array.isArray(content.games))content.games=[];
+    if (!content) return;
+
+    normalize(content);
+
     $('#section-title').textContent = labels[section];
 
     const editor = $('#editor');
     editor.replaceChildren();
 
-    const stats = $('#stats');
-    stats.replaceChildren();
-
-    for (const [label, value] of [
-      ['Sistem', content.systems.length],
-      ['Riset', content.research.length],
-      ['Pengalaman', content.experience.length]
-    ]) {
-      const stat = el('div', null, 'stat');
-      stat.append(
-        el('strong', String(value)),
-        el('span', label)
-      );
-      stats.append(stat);
-    }
+    renderStats();
 
     if (section === 'profile') {
       const box = el('section', null, 'entry');
-      box.append(form(content.profile, schemas.profile));
+
+      box.append(
+        form(content.profile, schemas.profile)
+      );
+
       editor.append(box);
     } else {
-      content[section].forEach((item, i) => {
+      const list = content[section];
+
+      if (!Array.isArray(list)) {
+        throw new Error(
+          'Data ' + labels[section] + ' tidak valid.'
+        );
+      }
+
+      list.forEach((item, index) => {
         const box = el('section', null, 'entry');
         const head = el('div', null, 'entry-head');
-
-        head.append(el(
-          'h2',
-          (i + 1) + '. ' +
-          (item.title || item.role || item.level || 'Item baru')
-        ));
-
         const actions = el('div', null, 'entry-actions');
 
+        head.append(
+          el(
+            'h2',
+            (index + 1) + '. ' +
+            (
+              item.title ||
+              item.role ||
+              item.level ||
+              'Item baru'
+            )
+          )
+        );
+
         actions.append(
-          button('↑', () => move(content[section], i, -1)),
-          button('↓', () => move(content[section], i, 1)),
+          button('↑', () => move(list, index, -1)),
+          button('↓', () => move(list, index, 1)),
+
           button('Hapus', () => {
+            if (busy || pendingUploads > 0) return;
+
             if (confirm(
-              'Hapus item ini dari draft? Perubahan berlaku setelah diterbitkan.'
+              'Hapus item ini dari draft? ' +
+              'Perubahan berlaku setelah diterbitkan.'
             )) {
-              content[section].splice(i, 1);
+              list.splice(index, 1);
               changed();
               render();
             }
@@ -582,52 +902,61 @@
         editor.append(box);
       });
 
-      if (!content[section].length) {
-        editor.append(el(
-          'p',
-          'Belum ada item. Tambahkan konten pertama.',
-          'empty'
-        ));
+      if (!list.length) {
+        editor.append(
+          el(
+            'p',
+            'Belum ada item. Tambahkan konten pertama.',
+            'empty'
+          )
+        );
       }
 
-      editor.append(button(
-        '+ Tambah ' + labels[section],
-        () => {
-          content[section].push(newItem(section));
+      editor.append(
+        button('+ Tambah ' + labels[section], () => {
+          if (busy || pendingUploads > 0) return;
+
+          list.push(newItem(section));
           changed();
           render();
-        }
-      ));
+        })
+      );
     }
 
-    document.querySelectorAll('#tabs button').forEach(b => {
-      b.setAttribute(
-        'aria-pressed',
-        String(b.dataset.key === section)
-      );
-    });
+    document.querySelectorAll('#tabs button')
+      .forEach(node => {
+        node.setAttribute(
+          'aria-pressed',
+          String(node.dataset.key === section)
+        );
+      });
 
     status();
   }
 
-  async function history() {
+  async function loadHistory() {
     const select = $('#versions');
     select.replaceChildren();
 
     const rows = await NestCMS.history();
 
-    for (const row of rows) {
+    rows.forEach(row => {
       const option = el(
         'option',
         'Versi ' + row.revision + ' · ' +
         new Date(row.created_at).toLocaleString('id-ID')
       );
+
       option.value = row.id;
       select.append(option);
-    }
+    });
 
     if (!rows.length) {
-      const option = el('option', 'Belum ada publikasi');
+      const option = el(
+        'option',
+        'Belum ada publikasi'
+      );
+
       option.value = '';
       select.append(option);
     }
@@ -636,18 +965,20 @@
   async function load() {
     const rows = await NestCMS.readAdmin();
 
-    content = clone(
-      rows[0]?.content || window.PORTFOLIO_DATA
+    content = normalize(
+      clone(rows[0]?.content || window.PORTFOLIO_DATA)
     );
 
     revision = rows[0]?.revision || 0;
     dirty = false;
+
     render();
-    await history();
+    await loadHistory();
 
     if (!rows.length) {
       notice(
-        'Konten dari website dimuat sebagai data awal. Periksa lalu tekan Terbitkan untuk mengaktifkan CMS.'
+        'Konten website dimuat sebagai data awal. ' +
+        'Periksa lalu klik Terbitkan untuk mengaktifkan CMS.'
       );
     }
   }
@@ -656,24 +987,30 @@
     const user = await NestCMS.authorize();
 
     $('#user-email').textContent = user.email;
-    $('#login').hidden = true;
-    $('#dashboard').hidden = false;
 
     await load();
+
+    $('#login').hidden = true;
+    $('#dashboard').hidden = false;
   }
 
+  const tabs = $('#tabs');
+  tabs.replaceChildren();
+
   for (const [key, label] of Object.entries(labels)) {
-    const b = button(label, () => {
+    const tab = button(label, () => {
+      if (!content || busy || pendingUploads > 0) return;
+
       section = key;
       render();
     });
 
-    b.dataset.key = key;
-    $('#tabs').append(b);
+    tab.dataset.key = key;
+    tabs.append(tab);
   }
 
-  $('#login-form').addEventListener('submit', e => {
-    e.preventDefault();
+  $('#login-form').addEventListener('submit', event => {
+    event.preventDefault();
 
     task(async () => {
       await NestCMS.login(
@@ -682,140 +1019,242 @@
       );
 
       $('#password').value = '';
+
       await enter();
       notice('Selamat datang, Nest.');
     });
   });
 
-  $('#logout').addEventListener('click', () => task(async () => {
-    if (dirty && !confirm(
-      'Keluar dengan perubahan belum diterbitkan? Simpan draft terlebih dahulu jika diperlukan.'
-    )) return;
+  $('#logout').addEventListener('click', () => {
+    task(async () => {
+      if (
+        dirty &&
+        !confirm(
+          'Keluar dengan perubahan belum diterbitkan? ' +
+          'Simpan draft terlebih dahulu jika diperlukan.'
+        )
+      ) {
+        return;
+      }
 
-    await NestCMS.logout();
-    location.reload();
-  }));
+      await NestCMS.logout();
+      location.reload();
+    });
+  });
 
-  $('#publish').addEventListener('click', () => task(async () => {
-    validate(content);
+  $('#publish').addEventListener('click', () => {
+    task(async () => {
+      if (!content) {
+        throw new Error('Konten belum dimuat.');
+      }
 
-    if (!confirm(
-      'Terbitkan perubahan ini ke website publik?'
-    )) return;
+      validate(content);
 
-    revision = await NestCMS.publish(content, revision);
-    dirty = false;
-    status();
-    await history();
+      if (!confirm(
+        'Terbitkan perubahan ini ke website publik?'
+      )) {
+        return;
+      }
 
-    notice(
-      'Versi ' + revision +
-      ' berhasil diterbitkan. Muat ulang website untuk melihat perubahan.'
-    );
-  }));
+      // Salin data agar perubahan selama permintaan
+      // tidak dianggap sudah ikut diterbitkan.
+      const snapshot = clone(content);
 
-  $('#draft').addEventListener('click', () => {
-    try {
-      localStorage.setItem(draftKey, JSON.stringify({
-        content,
-        date: new Date().toISOString(),
+      revision = await NestCMS.publish(
+        snapshot,
         revision
-      }));
+      );
+
+      dirty =
+        JSON.stringify(content) !==
+        JSON.stringify(snapshot);
+
+      status();
 
       notice(
-        'Draft tersimpan di browser ini. Belum tampil di website.'
+        'Versi ' + revision +
+        ' berhasil diterbitkan. Muat ulang website ' +
+        'untuk melihat perubahan.'
       );
-    } catch (e) {
-      notice('Draft tidak dapat disimpan: ' + e.message, true);
+
+      try {
+        await loadHistory();
+      } catch (_) {
+        notice(
+          'Publikasi berhasil, tetapi riwayat belum ' +
+          'dapat dimuat ulang.'
+        );
+      }
+    });
+  });
+
+  $('#draft').addEventListener('click', () => {
+    if (!content || busy || pendingUploads > 0) return;
+
+    try {
+      localStorage.setItem(
+        draftKey,
+        JSON.stringify({
+          content,
+          date: new Date().toISOString(),
+          revision
+        })
+      );
+
+      notice(
+        'Draft tersimpan di browser ini. ' +
+        'Belum tampil di website.'
+      );
+    } catch (error) {
+      notice(
+        'Draft tidak dapat disimpan: ' + error.message,
+        true
+      );
     }
   });
 
   $('#load-draft').addEventListener('click', () => {
+    if (busy || pendingUploads > 0) return;
+
     try {
       const draft = JSON.parse(
         localStorage.getItem(draftKey) || 'null'
       );
 
-      if (!draft) {
-        throw new Error('Belum ada draft di browser ini.');
+      if (!draft?.content) {
+        throw new Error(
+          'Belum ada draft di browser ini.'
+        );
       }
 
-      if (dirty && !confirm(
-        'Ganti perubahan saat ini dengan draft tersimpan?'
-      )) return;
+      if (
+        dirty &&
+        !confirm(
+          'Ganti perubahan saat ini dengan draft tersimpan?'
+        )
+      ) {
+        return;
+      }
 
-      validate(draft.content);
-      content = clone(draft.content);
+      const restored = normalize(clone(draft.content));
+      validate(restored);
+
+      content = restored;
+
       changed();
       render();
-      notice('Draft dibuka. Periksa sebelum menerbitkan.');
-    } catch (e) {
-      notice(e.message, true);
+
+      notice(
+        'Draft dibuka. Periksa sebelum menerbitkan.'
+      );
+    } catch (error) {
+      notice(error.message, true);
     }
   });
 
-  $('#reload').addEventListener('click', () => task(async () => {
-    if (dirty && !confirm(
-      'Buang perubahan belum diterbitkan dan muat konten terbaru?'
-    )) return;
+  $('#reload').addEventListener('click', () => {
+    task(async () => {
+      if (
+        dirty &&
+        !confirm(
+          'Buang perubahan belum diterbitkan ' +
+          'dan muat konten terbaru?'
+        )
+      ) {
+        return;
+      }
 
-    await load();
-    notice('Konten terbaru dimuat.');
-  }));
+      await load();
+      notice('Konten terbaru dimuat.');
+    });
+  });
 
-  $('#restore').addEventListener('click', () => task(async () => {
-    if (!$('#versions').value) {
-      throw new Error('Belum ada versi tersimpan.');
-    }
+  $('#restore').addEventListener('click', () => {
+    task(async () => {
+      const versionId = $('#versions').value;
 
-    if (dirty && !confirm(
-      'Ganti perubahan saat ini dengan versi yang dipilih?'
-    )) return;
+      if (!versionId) {
+        throw new Error(
+          'Belum ada versi tersimpan.'
+        );
+      }
 
-    content = clone(
-      await NestCMS.version($('#versions').value)
-    );
+      if (
+        dirty &&
+        !confirm(
+          'Ganti perubahan saat ini dengan versi yang dipilih?'
+        )
+      ) {
+        return;
+      }
 
-    changed();
-    render();
+      content = normalize(
+        clone(await NestCMS.version(versionId))
+      );
 
-    notice(
-      'Versi lama dibuka sebagai draft. Tekan Terbitkan untuk memulihkan.'
-    );
-  }));
+      changed();
+      render();
+
+      notice(
+        'Versi lama dibuka sebagai draft. ' +
+        'Klik Terbitkan untuk memulihkan.'
+      );
+    });
+  });
 
   $('#export').addEventListener('click', () => {
+    if (!content) return;
+
     const blob = new Blob(
       [JSON.stringify(content, null, 2)],
       { type: 'application/json' }
     );
 
     const url = URL.createObjectURL(blob);
-    const a = el('a');
-    a.href = url;
-    a.download = 'nest-portfolio-backup.json';
-    a.click();
+    const link = el('a');
+
+    link.href = url;
+    link.download = 'nest-portfolio-backup.json';
+
+    document.body.append(link);
+    link.click();
+    link.remove();
 
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   });
 
-  window.addEventListener('beforeunload', e => {
-    if (dirty) {
-      e.preventDefault();
-      e.returnValue = '';
+  window.addEventListener('beforeunload', event => {
+    if (dirty || pendingUploads > 0) {
+      event.preventDefault();
+      event.returnValue = '';
     }
   });
 
-  if (!NestCMS.configured()) {
+  if (
+    !window.NestCMS ||
+    !NestCMS.configured()
+  ) {
     $('#setup').hidden = false;
     $('#login-button').disabled = true;
+
+    notice(
+      'Konfigurasi Supabase belum tersedia.',
+      true
+    );
   } else {
     task(async () => {
+      let authorized = false;
+
       try {
-        await enter();
+        await NestCMS.authorize();
+        authorized = true;
       } catch (_) {
         $('#login').hidden = false;
         $('#dashboard').hidden = true;
+      }
+
+      if (authorized) {
+        await enter();
       }
     });
   }
