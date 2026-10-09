@@ -5,8 +5,7 @@
   if (!data) return;
 
   const $ = (s, root = document) => root.querySelector(s);
-  const $$ = (s, root = document) =>
-    Array.from(root.querySelectorAll(s));
+  const $$ = (s, root = document) => Array.from(root.querySelectorAll(s));
 
   const escapeHTML = value =>
     String(value == null ? '' : value).replace(
@@ -20,15 +19,13 @@
       }[ch])
     );
 
-  const safeUrl = url => {
+  function safeUrl(url) {
     if (!url) return '';
 
     if (/^https?:\/\//i.test(url)) {
       try {
         const parsed = new URL(url);
-        return parsed.username || parsed.password
-          ? ''
-          : parsed.href;
+        return parsed.username || parsed.password ? '' : parsed.href;
       } catch (_) {
         return '';
       }
@@ -36,60 +33,53 @@
 
     return /^assets\/[a-zA-Z0-9_./ -]+$/.test(url) &&
       !url.includes('..') ? url : '';
-  };
+  }
 
-  const fileLink = (
-    url,
-    label,
-    className = 'button secondary'
-  ) => {
+  function fileLink(url, label, className = 'button secondary') {
     const valid = safeUrl(url);
 
     return valid
-      ? `<a class="${className}"
-            href="${escapeHTML(valid)}"
-            target="_blank"
-            rel="noopener noreferrer">${escapeHTML(label)}</a>`
+      ? `<a class="${className}" href="${escapeHTML(valid)}"
+            target="_blank" rel="noopener noreferrer">${escapeHTML(label)}</a>`
       : '';
-  };
-
-  const thumb = src => src.startsWith('assets/')
-    ? src.replace(/\.png$/i, '.webp')
-    : src;
-
-
-  const games = Array.isArray(data.games) ? data.games : [];
-  [...new Set(games.map(g => g.category))].forEach(category => {
-    const option=document.createElement('option');option.value=category;option.textContent=category;$('#game-category').append(option);
-  });
-  function renderGames(){
-    const q=$('#game-search').value.trim().toLocaleLowerCase('id');
-    const category=$('#game-category').value;
-    const filtered=games.filter(g=>(!category||g.category===category)&&[g.title,g.category,g.summary].join(' ').toLocaleLowerCase('id').includes(q));
-    $('#game-projects').innerHTML=filtered.map(g=>{
-      const url=/^https?:\/\//i.test(g.publicUrl||'')?safeUrl(g.publicUrl):'';
-      const publicAccess=g.accessStatus==='public'&&Boolean(url);
-      return `<article class="project-card game-card"><div class="project-body"><div class="project-content"><div class="project-category">${escapeHTML(g.category)}</div><h3>${escapeHTML(g.title)}</h3><p>${escapeHTML(g.summary)}</p><p class="system-access">${publicAccess?'Public access':'Sistem disembunyikan'}</p>${publicAccess?`<a class="button secondary" href="${escapeHTML(url)}" target="_blank" rel="noopener noreferrer">Mainkan Game ↗</a>`:''}</div></div></article>`;
-    }).join('');
-    $('#game-result-count').textContent=`${filtered.length} dari ${games.length} game`;
-    $('#empty-games').hidden=filtered.length>0;
   }
-  $('#game-search').addEventListener('input',renderGames);
-  $('#game-category').addEventListener('change',renderGames);
-  renderGames();
+
+  function thumb(src) {
+    src = String(src || '');
+    return src.startsWith('assets/')
+      ? src.replace(/\.png$/i, '.webp')
+      : src;
+  }
+
+  function addCategories(selector, items) {
+    const select = $(selector);
+    if (!select) return;
+
+    [...new Set(items.map(item => item.category).filter(Boolean))]
+      .forEach(category => {
+        const option = document.createElement('option');
+        option.value = category;
+        option.textContent = category;
+        select.append(option);
+      });
+  }
+
+  function accessUrl(item) {
+    return item.accessStatus === 'public' &&
+      /^https?:\/\//i.test(item.publicUrl || '')
+      ? safeUrl(item.publicUrl)
+      : '';
+  }
+
   // Profil
   $('.hero-copy > .eyebrow').textContent =
     `${data.profile.name.toUpperCase()} / ${data.profile.nickname.toUpperCase()}`;
 
   $('.profession').textContent = data.profile.title;
-  $('.hero-description').textContent =
-    data.profile.heroDescription;
+  $('.hero-description').textContent = data.profile.heroDescription;
 
-  $('.hero-copy h1').innerHTML =
-    escapeHTML(data.profile.headline).replace(
-      'lebih membantu',
-      '<em>lebih membantu</em>'
-    );
+  $('.hero-copy h1').innerHTML = escapeHTML(data.profile.headline)
+    .replace('lebih membantu', '<em>lebih membantu</em>');
 
   $('.about-content > p:not(.large-text)').textContent =
     data.profile.aboutDescription;
@@ -103,22 +93,17 @@
         ${i === 0 ? 'PENDIDIKAN SARJANA' : 'STUDI LANJUTAN'}
       </span>
       <h3>${escapeHTML(e.level)}</h3>
-      <p>
-        ${escapeHTML(e.institution)}
-        ${e.period ? ' · ' + escapeHTML(e.period) : ''}
-      </p>
+      <p>${escapeHTML(e.institution)}${e.period ? ' · ' + escapeHTML(e.period) : ''}</p>
       ${e.gpa ? '<strong>IPK ' + escapeHTML(e.gpa) + '</strong>' : ''}
       ${e.thesis ? '<p class="small">Tugas akhir: ' + escapeHTML(e.thesis) + '</p>' : ''}
       ${e.status ? '<span class="tag">' + escapeHTML(e.status) + '</span>' : ''}
     </article>
   `).join('');
 
-  $$('a[href="assets/documents/resume-nestiara.pdf"]')
-    .forEach(a => {
-      if (safeUrl(data.profile.resumeUrl)) {
-        a.href = data.profile.resumeUrl;
-      }
-    });
+  $$('a[href="assets/documents/resume-nestiara.pdf"]').forEach(a => {
+    const url = safeUrl(data.profile.resumeUrl);
+    if (url) a.href = url;
+  });
 
   $('#skills').innerHTML = data.skills.map(s => `
     <article class="skill-group">
@@ -134,9 +119,7 @@
         <h3>${escapeHTML(e.role)}</h3>
         <p>${escapeHTML(e.company)}</p>
       </div>
-      <p class="experience-description">
-        ${escapeHTML(e.description)}
-      </p>
+      <p class="experience-description">${escapeHTML(e.description)}</p>
     </article>
   `).join('');
 
@@ -148,51 +131,36 @@
   `).join('');
 
   // Kontak
-  const email = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
-    data.profile.email
-  ) ? data.profile.email : '';
+  const email = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.profile.email)
+    ? data.profile.email : '';
 
-  const whatsapp = /^\d{8,15}$/.test(
-    data.profile.whatsapp
-  ) ? data.profile.whatsapp : '';
+  const whatsapp = /^\d{8,15}$/.test(data.profile.whatsapp)
+    ? data.profile.whatsapp : '';
 
   $('#contact-actions').innerHTML =
     (email
-      ? `<a class="button primary"
-            href="mailto:${escapeHTML(email)}">${escapeHTML(email)}</a>`
+      ? `<a class="button primary" href="mailto:${escapeHTML(email)}">${escapeHTML(email)}</a>`
       : '') +
     (whatsapp
-      ? `<a class="button secondary"
-            href="https://wa.me/${whatsapp}"
-            target="_blank"
-            rel="noopener noreferrer">WhatsApp</a>`
+      ? `<a class="button secondary" href="https://wa.me/${whatsapp}"
+            target="_blank" rel="noopener noreferrer">WhatsApp</a>`
       : '') +
     fileLink(data.profile.linkedinUrl, 'LinkedIn') +
     fileLink(data.profile.githubUrl, 'GitHub');
 
-  // Tema dan navigasi
+  // Tema
   function updateThemeLabel() {
-    const light =
-      document.documentElement.dataset.theme === 'light';
-
-    $('#theme').setAttribute(
-      'aria-label',
-      `Aktifkan mode ${light ? 'gelap' : 'terang'}`
-    );
-
-    $('#theme').setAttribute(
-      'title',
-      `Aktifkan mode ${light ? 'gelap' : 'terang'}`
-    );
+    const light = document.documentElement.dataset.theme === 'light';
+    const label = `Aktifkan mode ${light ? 'gelap' : 'terang'}`;
+    $('#theme').setAttribute('aria-label', label);
+    $('#theme').setAttribute('title', label);
   }
 
   updateThemeLabel();
 
   $('#theme').addEventListener('click', () => {
-    const next =
-      document.documentElement.dataset.theme === 'dark'
-        ? 'light'
-        : 'dark';
+    const next = document.documentElement.dataset.theme === 'dark'
+      ? 'light' : 'dark';
 
     document.documentElement.dataset.theme = next;
 
@@ -203,6 +171,7 @@
     updateThemeLabel();
   });
 
+  // Menu ponsel
   function closeMenu() {
     $('#navigation').classList.remove('open');
     $('#menu').setAttribute('aria-expanded', 'false');
@@ -211,23 +180,14 @@
 
   $('#menu').addEventListener('click', () => {
     const open = $('#navigation').classList.toggle('open');
-
     $('#menu').setAttribute('aria-expanded', String(open));
-    $('#menu').setAttribute(
-      'aria-label',
-      open ? 'Tutup menu' : 'Buka menu'
-    );
+    $('#menu').setAttribute('aria-label', open ? 'Tutup menu' : 'Buka menu');
   });
 
-  $$('#navigation a').forEach(a =>
-    a.addEventListener('click', closeMenu)
-  );
+  $$('#navigation a').forEach(a => a.addEventListener('click', closeMenu));
 
   document.addEventListener('keydown', e => {
-    if (
-      e.key === 'Escape' &&
-      $('#navigation').classList.contains('open')
-    ) {
+    if (e.key === 'Escape' && $('#navigation').classList.contains('open')) {
       closeMenu();
       $('#menu').focus();
     }
@@ -237,48 +197,21 @@
     if (window.innerWidth > 900) closeMenu();
   });
 
-  // Portfolio dan status akses
-  [...new Set(data.systems.map(s => s.category))]
-    .forEach(category => {
-      const option = document.createElement('option');
-      option.value = category;
-      option.textContent = category;
-      $('#category').appendChild(option);
-    });
+  // Portfolio Sistem
+  addCategories('#category', data.systems);
 
   function renderProjects() {
-    const q = $('#search').value.trim()
-      .toLocaleLowerCase('id');
-
+    const q = $('#search').value.trim().toLocaleLowerCase('id');
     const category = $('#category').value;
 
     const systems = data.systems.filter(s =>
       (!category || s.category === category) &&
       [s.title, s.category, s.summary]
-        .join(' ')
-        .toLocaleLowerCase('id')
-        .includes(q)
+        .join(' ').toLocaleLowerCase('id').includes(q)
     );
 
     $('#projects').innerHTML = systems.map(s => {
-      const url = /^https?:\/\//i.test(s.publicUrl || '')
-        ? safeUrl(s.publicUrl)
-        : '';
-
-      const publicAccess =
-        s.accessStatus === 'public' && Boolean(url);
-
-      const access = publicAccess
-        ? `
-          <p class="system-access">Public access</p>
-          <a class="button secondary"
-             href="${escapeHTML(url)}"
-             target="_blank"
-             rel="noopener noreferrer">Buka Sistem ↗</a>
-        `
-        : `
-          <p class="system-access">Sistem disembunyikan</p>
-        `;
+      const url = accessUrl(s);
 
       return `
         <article class="project-card">
@@ -286,31 +219,26 @@
             <div class="project-image">
               <span class="project-index">
                 ${String(data.systems.indexOf(s) + 1).padStart(2, '0')}
-                /
-                ${String(data.systems.length).padStart(2, '0')}
+                / ${String(data.systems.length).padStart(2, '0')}
               </span>
-              <img
-                src="${escapeHTML(thumb(s.cover))}"
-                alt="Tampilan ${escapeHTML(s.title)}"
-                loading="lazy"
-                width="900"
-                height="500"
-              >
+              <img src="${escapeHTML(thumb(s.cover))}"
+                   alt="Tampilan ${escapeHTML(s.title)}"
+                   loading="lazy" width="900" height="500">
             </div>
             <div class="project-content">
-              <div class="project-category">
-                ${escapeHTML(s.category)}
-              </div>
+              <div class="project-category">${escapeHTML(s.category)}</div>
               <h3>${escapeHTML(s.title)}</h3>
               <p>${escapeHTML(s.summary)}</p>
-              ${access}
+              <p class="system-access">
+                ${url ? 'Public access' : 'Sistem disembunyikan'}
+              </p>
+              ${url ? fileLink(url, 'Buka Sistem ↗') : ''}
             </div>
           </div>
           <div class="project-footer">
-            <button
-              type="button"
-              data-gallery="${escapeHTML(s.id)}"
-            >Lihat Screenshot</button>
+            <button type="button" data-gallery="${escapeHTML(s.id)}">
+              Lihat Screenshot
+            </button>
             <span>${s.gallery.length} tampilan</span>
           </div>
         </article>
@@ -327,12 +255,87 @@
   $('#category').addEventListener('change', renderProjects);
   renderProjects();
 
-  // Dialog galeri dan riset
-  const dialogs = [
-    $('#gallery-dialog'),
-    $('#research-dialog')
-  ];
+  // Games dengan sampul
+  const games = Array.isArray(data.games) ? data.games : [];
 
+  function renderGames() {
+    if (!$('#game-projects')) return;
+
+    const q = $('#game-search').value.trim().toLocaleLowerCase('id');
+    const category = $('#game-category').value;
+
+    const filtered = games.filter(g =>
+      (!category || g.category === category) &&
+      [g.title, g.category, g.summary]
+        .join(' ').toLocaleLowerCase('id').includes(q)
+    );
+
+    $('#game-projects').innerHTML = filtered.map(g => {
+      const url = accessUrl(g);
+      const cover = safeUrl(g.cover || '');
+
+      const coverHTML = cover
+        ? `<img class="game-cover"
+                src="${escapeHTML(cover)}"
+                alt="Sampul ${escapeHTML(g.title)}"
+                loading="lazy" decoding="async"
+                width="800" height="450">`
+        : `<div class="game-cover-placeholder">
+             <span aria-hidden="true">🎮</span>
+             <strong>${escapeHTML(g.title)}</strong>
+           </div>`;
+
+      return `
+        <article class="project-card game-card">
+          <div class="game-cover-wrap">${coverHTML}</div>
+          <div class="project-content">
+            <div class="project-category">${escapeHTML(g.category)}</div>
+            <h3>${escapeHTML(g.title)}</h3>
+            <p>${escapeHTML(g.summary)}</p>
+            <p class="system-access">
+              ${url ? 'Public access' : 'Sistem disembunyikan'}
+            </p>
+            ${url ? fileLink(url, 'Mainkan Game ↗') : ''}
+          </div>
+        </article>
+      `;
+    }).join('');
+
+    $('#game-result-count').textContent =
+      `${filtered.length} dari ${games.length} game`;
+
+    $('#empty-games').hidden = filtered.length > 0;
+  }
+
+  if ($('#game-projects')) {
+    addCategories('#game-category', games);
+    $('#game-search').addEventListener('input', renderGames);
+    $('#game-category').addEventListener('change', renderGames);
+    renderGames();
+
+    // Pengganti jika tautan gambar rusak.
+    $('#game-projects').addEventListener('error', e => {
+      const img = e.target;
+      if (!(img instanceof HTMLImageElement) ||
+          !img.classList.contains('game-cover')) return;
+
+      const placeholder = document.createElement('div');
+      placeholder.className = 'game-cover-placeholder';
+
+      const icon = document.createElement('span');
+      icon.textContent = '🎮';
+      icon.setAttribute('aria-hidden', 'true');
+
+      const title = document.createElement('strong');
+      title.textContent = img.alt.replace(/^Sampul /, '');
+
+      placeholder.append(icon, title);
+      img.replaceWith(placeholder);
+    }, true);
+  }
+
+  // Dialog
+  const dialogs = [$('#gallery-dialog'), $('#research-dialog')];
   let returnFocus = null;
 
   function openDialog(dialog, trigger) {
@@ -342,109 +345,77 @@
     $('.close-dialog', dialog).focus();
   }
 
-  function closeDialog(dialog) {
-    dialog.close();
-  }
-
   dialogs.forEach(dialog => {
-    $('.close-dialog', dialog).addEventListener(
-      'click',
-      () => closeDialog(dialog)
-    );
+    $('.close-dialog', dialog).addEventListener('click', () => dialog.close());
 
     dialog.addEventListener('close', () => {
       document.body.style.overflow = '';
-
-      if (returnFocus && returnFocus.isConnected) {
-        returnFocus.focus();
-      }
+      if (returnFocus && returnFocus.isConnected) returnFocus.focus();
     });
 
     dialog.addEventListener('click', e => {
       if (e.target !== dialog) return;
-
       const r = dialog.getBoundingClientRect();
 
       if (
-        e.clientX < r.left ||
-        e.clientX > r.right ||
-        e.clientY < r.top ||
-        e.clientY > r.bottom
-      ) {
-        closeDialog(dialog);
-      }
+        e.clientX < r.left || e.clientX > r.right ||
+        e.clientY < r.top || e.clientY > r.bottom
+      ) dialog.close();
     });
   });
 
+  // Galeri screenshot
+  let currentSystem = null;
+  let imageIndex = 0;
+
   $('#full-image').addEventListener('load', () => {
     $('#full-image').classList.remove('image-enter');
-
     requestAnimationFrame(() =>
       $('#full-image').classList.add('image-enter')
     );
   });
 
-  let currentSystem = null;
-  let imageIndex = 0;
-
   function showImage(index) {
-    if (!currentSystem) return;
+    if (!currentSystem || !currentSystem.gallery.length) return;
 
-    imageIndex =
-      (index + currentSystem.gallery.length) %
+    imageIndex = (index + currentSystem.gallery.length) %
       currentSystem.gallery.length;
 
     const img = currentSystem.gallery[imageIndex];
 
     $('#full-image').classList.remove('image-enter');
     $('#full-image').src = img.src;
-    $('#full-image').alt =
-      `${currentSystem.title} — ${img.caption}`;
-
+    $('#full-image').alt = `${currentSystem.title} — ${img.caption}`;
     $('#gallery-caption').textContent = img.caption;
+
     $('#gallery-number').textContent =
       `${imageIndex + 1} / ${currentSystem.gallery.length}`;
 
     $$('#gallery-thumbnails button').forEach((b, i) => {
-      b.setAttribute(
-        'aria-current',
-        String(i === imageIndex)
-      );
+      b.setAttribute('aria-current', String(i === imageIndex));
     });
 
-    const selected =
-      $$('#gallery-thumbnails button')[imageIndex];
+    const selected = $$('#gallery-thumbnails button')[imageIndex];
 
     if (selected && $('#gallery-dialog').open) {
       selected.scrollIntoView({
-        block: 'nearest',
-        inline: 'nearest',
-        behavior: 'auto'
+        block: 'nearest', inline: 'nearest', behavior: 'auto'
       });
     }
   }
 
   function openGallery(id, trigger) {
     currentSystem = data.systems.find(s => s.id === id);
-
-    if (!currentSystem || !currentSystem.gallery.length) {
-      return;
-    }
+    if (!currentSystem || !currentSystem.gallery.length) return;
 
     $('#gallery-title').textContent = currentSystem.title;
 
-    $('#gallery-thumbnails').innerHTML =
-      currentSystem.gallery.map((im, i) => `
-        <button
-          data-image="${i}"
-          aria-label="Tampilan ${i + 1}: ${escapeHTML(im.caption)}"
-          aria-current="${i === 0}"
-        >
-          <img
-            src="${escapeHTML(thumb(im.src))}"
-            alt=""
-            loading="lazy"
-          >
+    $('#gallery-thumbnails').innerHTML = currentSystem.gallery
+      .map((im, i) => `
+        <button type="button" data-image="${i}"
+                aria-label="Tampilan ${i + 1}: ${escapeHTML(im.caption)}"
+                aria-current="${i === 0}">
+          <img src="${escapeHTML(thumb(im.src))}" alt="" loading="lazy">
         </button>
       `).join('');
 
@@ -453,15 +424,8 @@
     $('#gallery-thumbnails').scrollLeft = 0;
   }
 
-  $('#previous-image').addEventListener(
-    'click',
-    () => showImage(imageIndex - 1)
-  );
-
-  $('#next-image').addEventListener(
-    'click',
-    () => showImage(imageIndex + 1)
-  );
+  $('#previous-image').addEventListener('click', () => showImage(imageIndex - 1));
+  $('#next-image').addEventListener('click', () => showImage(imageIndex + 1));
 
   $('#gallery-thumbnails').addEventListener('click', e => {
     const b = e.target.closest('[data-image]');
@@ -473,7 +437,6 @@
       e.preventDefault();
       showImage(imageIndex + 1);
     }
-
     if (e.key === 'ArrowLeft') {
       e.preventDefault();
       showImage(imageIndex - 1);
@@ -494,29 +457,20 @@
     const dx = e.changedTouches[0].clientX - touchX;
     const dy = e.changedTouches[0].clientY - touchY;
 
-    if (
-      Math.abs(dx) > 45 &&
-      Math.abs(dx) > Math.abs(dy)
-    ) {
+    if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) {
       showImage(imageIndex + (dx < 0 ? 1 : -1));
     }
 
     touchX = null;
   }, { passive: true });
 
-  // Riset akademik
-  const topics = [
-    'Semua',
-    ...new Set(data.research.map(r => r.topic))
-  ];
+  // Riset
+  const topics = ['Semua', ...new Set(data.research.map(r => r.topic))];
 
-  $('#research-filters').innerHTML =
-    topics.map((topic, i) => `
-      <button
-        data-topic="${escapeHTML(topic)}"
-        aria-pressed="${i === 0}"
-      >${escapeHTML(topic)}</button>
-    `).join('');
+  $('#research-filters').innerHTML = topics.map((topic, i) => `
+    <button type="button" data-topic="${escapeHTML(topic)}"
+            aria-pressed="${i === 0}">${escapeHTML(topic)}</button>
+  `).join('');
 
   function renderResearch(topic) {
     $('#research').innerHTML = data.research
@@ -539,14 +493,10 @@
             </p>
           </div>
           <div class="research-actions">
-            <button
-              class="button secondary"
-              data-research="${escapeHTML(r.id)}"
-            >Baca Ringkasan</button>
+            <button type="button" class="button secondary"
+                    data-research="${escapeHTML(r.id)}">Baca Ringkasan</button>
             ${fileLink(r.documentUrl, 'Lihat Dokumen')}
-            <span class="research-status">
-              ${escapeHTML(r.status)}
-            </span>
+            <span class="research-status">${escapeHTML(r.status)}</span>
           </div>
         </article>
       `).join('');
@@ -556,9 +506,9 @@
     const b = e.target.closest('[data-topic]');
     if (!b) return;
 
-    $$('#research-filters button').forEach(x =>
-      x.setAttribute('aria-pressed', String(x === b))
-    );
+    $$('#research-filters button').forEach(x => {
+      x.setAttribute('aria-pressed', String(x === b));
+    });
 
     renderResearch(b.dataset.topic);
   });
@@ -572,11 +522,9 @@
     $('#research-detail').innerHTML = `
       <span class="tag">${escapeHTML(r.type)}</span>
       <h2 id="research-title">${escapeHTML(r.title)}</h2>
-      <p class="research-authors">
-        ${r.authors.map(escapeHTML).join(' · ')}
-      </p>
+      <p class="research-authors">${r.authors.map(escapeHTML).join(' · ')}</p>
       <p>${escapeHTML(r.summary)}</p>
-      <h3>Fokus & metode</h3>
+      <h3>Fokus &amp; metode</h3>
       <p>${escapeHTML(r.focus)}<br>${escapeHTML(r.method)}</p>
       <h3>Ringkasan</h3>
       <p>${escapeHTML(r.detail)}</p>
@@ -584,9 +532,7 @@
         ${fileLink(r.documentUrl, 'Lihat Dokumen')}
         ${r.supports.map(s => fileLink(s.url, s.label)).join('')}
       </div>
-      <span class="research-status">
-        ${escapeHTML(r.status)}
-      </span>
+      <span class="research-status">${escapeHTML(r.status)}</span>
     `;
 
     openDialog($('#research-dialog'), trigger);
@@ -594,27 +540,42 @@
 
   document.addEventListener('click', e => {
     const gallery = e.target.closest('[data-gallery]');
-    if (gallery) {
-      openGallery(gallery.dataset.gallery, gallery);
-    }
+    if (gallery) openGallery(gallery.dataset.gallery, gallery);
 
     const research = e.target.closest('[data-research]');
-    if (research) {
-      openResearch(research.dataset.research, research);
-    }
+    if (research) openResearch(research.dataset.research, research);
   });
 
-  // Animasi halaman
-  const reducedMotion = window.matchMedia(
-    '(prefers-reduced-motion: reduce)'
-  );
+  // Jumlah pada label kamar
+  function updateRoomCounts() {
+    const board = $('#room-portfolio-count') ||
+      $('#board-hotspot .hotspot-label small');
+
+    const research = $('#room-research-count') ||
+      $('#research-hotspot .hotspot-label small');
+
+    const images = data.systems.reduce(
+      (total, system) => total + (system.gallery || []).length, 0
+    );
+
+    if (board) {
+      board.textContent = `${data.systems.length} sistem · ${images} tampilan`;
+    }
+
+    if (research) {
+      research.textContent = `${data.research.length} riset akademik`;
+    }
+  }
+
+  updateRoomCounts();
+
+  // Animasi
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   function updateMotion() {
     document.documentElement.classList.remove('motion-paused');
-
     document.documentElement.classList.toggle(
-      'motion-reduced',
-      reducedMotion.matches
+      'motion-reduced', reducedMotion.matches
     );
   }
 
@@ -624,72 +585,60 @@
 
   updateMotion();
 
-  $$('.focus-strip span').forEach((node, i) =>
-    node.style.setProperty('--item-delay', `${i * 80}ms`)
-  );
+  $$('.focus-strip span').forEach((node, i) => {
+    node.style.setProperty('--item-delay', `${i * 80}ms`);
+  });
 
   if ('IntersectionObserver' in window) {
-    const cardsObserver = new IntersectionObserver(
-      entries => entries.forEach(entry => {
+    const cardsObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add('motion-visible');
           cardsObserver.unobserve(entry.target);
         }
-      }),
-      { threshold: 0.06 }
-    );
-
-    const animatedSelectors =
-      '.project-card,.research-row,.cert,.experience-row';
+      });
+    }, { threshold: 0.06 });
 
     function observeCards() {
-      $$(animatedSelectors).forEach((node, i) => {
-        if (node.classList.contains('motion-item')) return;
-
-        node.classList.add('motion-item');
-        node.style.setProperty(
-          '--item-delay',
-          `${(i % 3) * 65}ms`
-        );
-
-        cardsObserver.observe(node);
-      });
+      $$('.project-card,.research-row,.cert,.experience-row')
+        .forEach((node, i) => {
+          if (node.classList.contains('motion-item')) return;
+          node.classList.add('motion-item');
+          node.style.setProperty('--item-delay', `${(i % 3) * 65}ms`);
+          cardsObserver.observe(node);
+        });
     }
 
     observeCards();
 
-    const cardChanges = new MutationObserver(observeCards);
+    const changes = new MutationObserver(observeCards);
 
-    [$('#projects'), $('#research')].forEach(container =>
-      cardChanges.observe(container, { childList: true })
-    );
+    [$('#projects'), $('#research'), $('#game-projects')]
+      .filter(Boolean)
+      .forEach(container =>
+        changes.observe(container, { childList: true })
+      );
 
     if (!reducedMotion.matches) {
       document.documentElement.classList.add('js-motion');
 
-      const reveal = new IntersectionObserver(
-        entries => entries.forEach(entry => {
+      const reveal = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
           if (entry.isIntersecting) {
             entry.target.classList.add('visible');
             reveal.unobserve(entry.target);
           }
-        }),
-        { threshold: 0.08 }
-      );
+        });
+      }, { threshold: 0.08 });
 
       $$('.reveal').forEach(node => reveal.observe(node));
     }
   }
 
   function updateBackTop() {
-    $('.back-top').hidden = window.scrollY < 600;
+    if ($('.back-top')) $('.back-top').hidden = window.scrollY < 600;
   }
 
-  window.addEventListener(
-    'scroll',
-    updateBackTop,
-    { passive: true }
-  );
-
+  window.addEventListener('scroll', updateBackTop, { passive: true });
   updateBackTop();
 })();
