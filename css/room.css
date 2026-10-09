@@ -21,3 +21,13 @@
 .board-preview:nth-child(2),.board-preview:nth-child(5){transform:rotate(2deg)}.board-preview img{width:100%;height:74%;object-fit:contain;background:#f8f9fb}.board-preview small{display:block;font:600 clamp(.28rem,.6vw,.58rem)/1.4 var(--body);color:#37434a;text-align:center;margin-top:3px;white-space:nowrap}
 @media(max-width:640px){.character-link{top:35%;height:65%}.phone-link{left:80%;top:61%;width:10%;height:14%}.board-previews{gap:9% 8%;inset:4% 5% 15%}.board-preview small{font-size:.3rem;margin-top:1px}.board-preview{padding:3%}}
 
+
+/* The introduction bubble lives below the room, away from the face. */
+.room-status{flex-wrap:wrap;align-items:center}
+.room-introduction{display:block;margin-left:auto;color:var(--room-ink);flex-shrink:0}
+.room-introduction .speech-bubble{position:static;display:block;transform:none!important;animation:none!important;min-width:0;padding:9px 18px;font-size:.8rem}
+.room-introduction .speech-bubble:after{display:none}
+.room-introduction:focus-visible{outline:3px solid var(--room-gold);outline-offset:4px;border-radius:17px}
+.game-card .project-content{padding:28px}
+.game-card .project-body{height:100%}
+@media(max-width:640px){.room-introduction{flex-basis:100%;margin:8px 0 0}.room-introduction .speech-bubble{font-size:.8rem;padding:10px 14px}.room-introduction .bubble-dots{display:none}}

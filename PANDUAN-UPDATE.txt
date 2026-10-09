@@ -1,0 +1,10 @@
+UPDATE GAMES + BUBBLE NESTIARA
+1. Ekstrak ZIP. Upload ISI folder Nest-Games-Update ke root repo Nest-Portfolio, menimpa file yang sama.
+2. Jangan hapus aset/css lain. Paket ini hanya berisi file pembaruan.
+3. Commit dan tunggu GitHub Pages selesai deploy. Refresh Ctrl+Shift+R.
+4. Login admin > Games > Tambah Games. Isi kode unik, nama, kategori, deskripsi.
+5. Pilih Public access dan isi https://... agar tombol Mainkan Game muncul. Klik Terbitkan.
+6. Games tidak membutuhkan screenshot atau gambar sampul.
+7. Bubble perkenalan sekarang berada di bar bawah ilustrasi kamar, sehingga tidak menutupi wajah pada desktop maupun ponsel.
+8. Tidak perlu mengubah konfigurasi Supabase atau menjalankan ulang SQL: Games tersimpan dalam JSON konten yang sama. Daftar Games lama otomatis dianggap kosong.
+9. Perubahan baru terlihat di tab pengunjung setelah halaman dimuat ulang.

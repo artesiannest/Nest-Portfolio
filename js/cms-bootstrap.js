@@ -74,7 +74,7 @@
   for (const path of ['js/main.js', 'js/room.js']) {
     await new Promise(resolve => {
       const script = document.createElement('script');
-      script.src = path;
+      script.src = path + '?v=20261009-games-1';
       script.onload = resolve;
 
       script.onerror = () => {

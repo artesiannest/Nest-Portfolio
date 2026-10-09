@@ -2,8 +2,8 @@
   'use strict';
   const root = document.documentElement;
   const pages = Array.from(document.querySelectorAll('[data-view]'));
-  const routeMap = {beranda:'beranda',tentang:'tentang',pengalaman:'tentang',portfolio:'portfolio',riset:'riset',kontak:'kontak'};
-  const names = {beranda:'Kamar Nest',tentang:'Tentang & Pengalaman',portfolio:'Portfolio Sistem',riset:'Riset Akademik',kontak:'Kontak'};
+  const routeMap = {beranda:'beranda',tentang:'tentang',pengalaman:'tentang',portfolio:'portfolio',riset:'riset',kontak:'kontak',games:'games'};
+  const names = {beranda:'Kamar Nest',tentang:'Tentang & Pengalaman',portfolio:'Portfolio Sistem',riset:'Riset Akademik',kontak:'Kontak',games:'Games'};
   let activeView = 'beranda';
   let sourceHotspot = null;
   let soundEnabled = false;

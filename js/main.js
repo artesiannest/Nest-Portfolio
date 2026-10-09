@@ -57,6 +57,26 @@
     ? src.replace(/\.png$/i, '.webp')
     : src;
 
+
+  const games = Array.isArray(data.games) ? data.games : [];
+  [...new Set(games.map(g => g.category))].forEach(category => {
+    const option=document.createElement('option');option.value=category;option.textContent=category;$('#game-category').append(option);
+  });
+  function renderGames(){
+    const q=$('#game-search').value.trim().toLocaleLowerCase('id');
+    const category=$('#game-category').value;
+    const filtered=games.filter(g=>(!category||g.category===category)&&[g.title,g.category,g.summary].join(' ').toLocaleLowerCase('id').includes(q));
+    $('#game-projects').innerHTML=filtered.map(g=>{
+      const url=/^https?:\/\//i.test(g.publicUrl||'')?safeUrl(g.publicUrl):'';
+      const publicAccess=g.accessStatus==='public'&&Boolean(url);
+      return `<article class="project-card game-card"><div class="project-body"><div class="project-content"><div class="project-category">${escapeHTML(g.category)}</div><h3>${escapeHTML(g.title)}</h3><p>${escapeHTML(g.summary)}</p><p class="system-access">${publicAccess?'Public access':'Sistem disembunyikan'}</p>${publicAccess?`<a class="button secondary" href="${escapeHTML(url)}" target="_blank" rel="noopener noreferrer">Mainkan Game ↗</a>`:''}</div></div></article>`;
+    }).join('');
+    $('#game-result-count').textContent=`${filtered.length} dari ${games.length} game`;
+    $('#empty-games').hidden=filtered.length>0;
+  }
+  $('#game-search').addEventListener('input',renderGames);
+  $('#game-category').addEventListener('change',renderGames);
+  renderGames();
   // Profil
   $('.hero-copy > .eyebrow').textContent =
     `${data.profile.name.toUpperCase()} / ${data.profile.nickname.toUpperCase()}`;

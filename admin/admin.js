@@ -7,7 +7,7 @@
   const labels = {
     profile: 'Profil & Kontak',
     experience: 'Pengalaman',
-    systems: 'Portfolio Sistem',
+    systems: 'Portfolio Sistem',games: 'Games',
     research: 'Riset Akademik',
     education: 'Pendidikan',
     skills: 'Keahlian',
@@ -15,6 +15,7 @@
   };
 
   const schemas = {
+ games:{id:'Kode unik game',title:'Nama game',category:'Kategori',summary:'Deskripsi singkat',accessStatus:'Status akses game',publicUrl:'Tautan game'},
     profile: {
       name: 'Nama lengkap',
       nickname: 'Nama panggilan',
@@ -185,6 +186,7 @@
   }
 
   function validate(data) {
+    if(!Array.isArray(data.games))data.games=[];
     if (!data.profile || !data.profile.name.trim()) {
       throw new Error('Nama profil wajib diisi.');
     }
@@ -198,7 +200,7 @@
       }
     }
 
-    for (const key of ['systems', 'research']) {
+    for (const key of ['systems', 'research', 'games']) {
       const ids = new Set();
 
       for (const item of data[key]) {
@@ -222,7 +224,8 @@
       }
     }
 
-    function walk(obj) {
+    for(const g of data.games){if(g.accessStatus==='public'&&(!/^https?:\/\//i.test(g.publicUrl||'')||!safeUrl(g.publicUrl)))throw new Error('Isi tautan game yang valid untuk '+g.title);}
+  function walk(obj) {
       for (const [key, value] of Object.entries(obj)) {
         if (
           urls.has(key) &&
@@ -485,6 +488,7 @@
       item[field] = '';
     }
 
+    if(key==='games')Object.assign(item,{id:'game-'+Date.now(),accessStatus:'hidden'});
     if (key === 'skills') item.items = [];
 
     if (key === 'systems') {
@@ -511,6 +515,7 @@
   }
 
   function render() {
+    if(!Array.isArray(content.games))content.games=[];
     $('#section-title').textContent = labels[section];
 
     const editor = $('#editor');
