@@ -1,20 +1,90 @@
 (async function () {
   'use strict';
+
+  // Ambil konten terbaru dari CMS.
   if (window.NestCMS && NestCMS.configured()) {
-    try { const rows=await NestCMS.readPublic(); if(rows[0] && rows[0].content) window.PORTFOLIO_DATA=rows[0].content; }
-    catch(error) { console.warn('CMS tidak tersedia; website memakai data cadangan.',error.message); }
+    try {
+      const rows = await NestCMS.readPublic();
+
+      if (rows[0] && rows[0].content) {
+        window.PORTFOLIO_DATA = rows[0].content;
+      }
+    } catch (error) {
+      console.warn(
+        'CMS tidak tersedia; menggunakan data cadangan.',
+        error.message
+      );
+    }
   }
-  // Jalankan script tampilan setelah konten selesai dimuat.
-  for(const path of ['js/main.js','js/room.js']) {
-    await new Promise(resolve=>{const s=document.createElement('script');s.src=path;s.onload=resolve;s.onerror=resolve;document.body.appendChild(s);});
+
+  function updateCounts() {
+    const data = window.PORTFOLIO_DATA;
+    if (!data) return;
+
+    const systems = Array.isArray(data.systems)
+      ? data.systems
+      : [];
+
+    const research = Array.isArray(data.research)
+      ? data.research
+      : [];
+
+    const screenshots = systems.reduce(
+      (total, system) =>
+        total + (
+          Array.isArray(system.gallery)
+            ? system.gallery.length
+            : 0
+        ),
+      0
+    );
+
+    // Targetkan label mading, bukan caption screenshot.
+    const boardLabel = document.querySelector(
+      '#board-hotspot .hotspot-label small'
+    );
+
+    if (boardLabel) {
+      boardLabel.textContent =
+        `${systems.length} sistem · ${screenshots} tampilan`;
+    }
+
+    const researchLabel = document.querySelector(
+      '#research-hotspot .hotspot-label small'
+    );
+
+    if (researchLabel) {
+      researchLabel.textContent =
+        `${research.length} riset akademik`;
+    }
+
+    const portfolioHeading = document.querySelector(
+      '#portfolio .section-heading h2 em'
+    );
+
+    if (portfolioHeading) {
+      portfolioHeading.textContent =
+        `${systems.length} sistem.`;
+    }
   }
-  const data=window.PORTFOLIO_DATA;
-  if(data) {
-    const count=data.systems.length;
-    const previews=data.systems.reduce((total,s)=>total+s.gallery.length,0);
-    const board=document.querySelector('#board-hotspot small');
-    if(board) board.textContent=count+' sistem · '+previews+' tampilan';
-    const research=document.querySelector('#research-hotspot small');
-    if(research) research.textContent=data.research.length+' riset akademik';
+
+  updateCounts();
+
+  // Jalankan tampilan setelah data selesai dimuat.
+  for (const path of ['js/main.js', 'js/room.js']) {
+    await new Promise(resolve => {
+      const script = document.createElement('script');
+      script.src = path;
+      script.onload = resolve;
+
+      script.onerror = () => {
+        console.error('Gagal memuat:', path);
+        resolve();
+      };
+
+      document.body.appendChild(script);
+    });
   }
+
+  updateCounts();
 })();
