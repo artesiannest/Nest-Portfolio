@@ -1,0 +1,170 @@
+/* ================================
+   GAMES — TAMPILAN KARTU PORTFOLIO
+================================ */
+
+#game-projects.project-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 36px 28px;
+  align-items: stretch;
+}
+
+#game-projects .game-card {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+}
+
+#game-projects .game-card:hover {
+  border-color: var(--accent);
+}
+
+#game-projects .game-card .project-body {
+  display: block;
+}
+
+#game-projects .game-card .project-image {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  padding: 24px;
+  background: var(--surface-2);
+}
+
+#game-projects .project-index {
+  position: absolute;
+  top: 10px;
+  right: 13px;
+  z-index: 1;
+  color: var(--muted);
+  font-size: .65rem;
+}
+
+#game-projects .project-image .game-cover-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1.8;
+  object-fit: contain;
+  object-position: center;
+  border-radius: 5px;
+  background: #f5f7fb;
+  box-shadow: 0 12px 25px #0002;
+  transition: transform .4s;
+}
+
+#game-projects .game-card:hover .game-cover-image {
+  transform: scale(1.025);
+}
+
+/* Area sampul tetap terlihat saat gambar belum diisi. */
+#game-projects .game-empty-cover {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  aspect-ratio: 1.8;
+  padding: 20px;
+  border-radius: 5px;
+  background: linear-gradient(
+    135deg,
+    #172a35,
+    #31485b
+  );
+  color: #fff4e1;
+  text-align: center;
+  box-shadow: 0 12px 25px #0002;
+}
+
+#game-projects .game-empty-icon {
+  display: block;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  line-height: 1;
+}
+
+#game-projects .game-empty-text {
+  display: block;
+  font-size: .85rem;
+  line-height: 1.5;
+}
+
+/* Sama dengan konten kartu Portfolio. */
+#game-projects .game-card .project-content {
+  display: block;
+  padding: 27px 28px 18px;
+}
+
+#game-projects .project-category {
+  margin-bottom: 10px;
+  color: var(--accent);
+  font-size: .72rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+#game-projects .project-content h3 {
+  margin-bottom: 13px;
+  font-size: 1.6rem;
+  overflow-wrap: anywhere;
+}
+
+#game-projects .project-content p {
+  margin-bottom: 17px;
+  font-size: .94rem;
+  overflow-wrap: anywhere;
+}
+
+#game-projects .game-card .project-content > .button {
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
+/* Tablet mengikuti Portfolio. */
+@media (max-width: 900px) {
+  #game-projects .game-card .project-image {
+    padding: 15px;
+  }
+
+  #game-projects .game-card .project-content {
+    padding: 22px 20px 15px;
+  }
+
+  #game-projects .project-content h3 {
+    font-size: 1.35rem;
+  }
+}
+
+/* Ponsel: satu kartu per baris. */
+@media (max-width: 640px) {
+  #game-projects.project-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  #game-projects .game-card .project-image {
+    padding: 22px;
+  }
+
+  #game-projects .game-card .project-content {
+    padding: 23px 23px 16px;
+  }
+
+  #game-projects .project-content h3 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #game-projects .project-image .game-cover-image {
+    transition: none;
+  }
+
+  #game-projects .game-card:hover .game-cover-image {
+    transform: none;
+  }
+}
