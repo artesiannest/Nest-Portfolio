@@ -8,7 +8,7 @@
   display: none !important;
 }
 
-/* Beranda */
+/* BERANDA */
 .room-home {
   max-width: 1600px;
   margin: auto;
@@ -81,7 +81,7 @@
   pointer-events: none;
 }
 
-/* Area interaktif */
+/* AREA INTERAKTIF */
 .room-hotspot,
 .character-link,
 .phone-link {
@@ -158,7 +158,7 @@
   box-shadow: 0 0 0 4px #2788701a;
 }
 
-/* Thumbnail mading */
+/* THUMBNAIL MADING */
 .board-previews {
   position: absolute;
   inset: 4% 6% 15%;
@@ -208,7 +208,7 @@
   text-overflow: ellipsis;
 }
 
-/* Karakter */
+/* KARAKTER */
 .character-link {
   left: 37%;
   top: 35%;
@@ -228,7 +228,7 @@
   pointer-events: none;
 }
 
-/* Bubble di bawah kursi */
+/* BUBBLE DI BAWAH KURSI */
 .room-stage .room-introduction.nest-under-chair {
   position: absolute;
   display: block;
@@ -275,11 +275,13 @@
   display: none;
 }
 
-/* Gamepad: atas meja, sebelah kiri laptop */
+/* GAMEPAD DI ATAS MEJA SEBELAH KIRI */
 .room-stage #games-hotspot {
   position: absolute;
-  left: 39%;
-  top: 59%;
+  left: 28%;
+  top: 60%;
+  bottom: auto;
+  right: auto;
   width: 10%;
   height: 11%;
   display: block;
@@ -319,7 +321,7 @@
   white-space: nowrap;
 }
 
-/* Handphone */
+/* HANDPHONE */
 .phone-link {
   left: 80%;
   top: 61%;
@@ -373,7 +375,7 @@
   font-weight: 400;
 }
 
-/* Cahaya dan partikel */
+/* CAHAYA DAN PARTIKEL */
 .lamp-glow {
   position: absolute;
   left: 29%;
@@ -427,26 +429,36 @@
 }
 
 .room-dust span:nth-child(1) {
-  left: 36%; top: 60%; animation-delay: -3s;
+  left: 36%;
+  top: 60%;
+  animation-delay: -3s;
 }
 
 .room-dust span:nth-child(2) {
-  left: 43%; top: 65%; animation-delay: -7s;
+  left: 43%;
+  top: 65%;
+  animation-delay: -7s;
 }
 
 .room-dust span:nth-child(3) {
-  left: 56%; top: 54%; animation-delay: -1s;
+  left: 56%;
+  top: 54%;
+  animation-delay: -1s;
 }
 
 .room-dust span:nth-child(4) {
-  left: 29%; top: 66%; animation-delay: -9s;
+  left: 29%;
+  top: 66%;
+  animation-delay: -9s;
 }
 
 .room-dust span:nth-child(5) {
-  left: 64%; top: 70%; animation-delay: -5s;
+  left: 64%;
+  top: 70%;
+  animation-delay: -5s;
 }
 
-/* Bar bawah kamar */
+/* BAR BAWAH KAMAR */
 .room-status {
   display: flex;
   justify-content: space-between;
@@ -479,7 +491,7 @@
   background: #22343e;
 }
 
-/* Menu pilihan ruang */
+/* MENU PILIHAN RUANG */
 .room-dock {
   position: static;
   display: grid;
@@ -528,7 +540,7 @@
   line-height: 1.5;
 }
 
-/* Halaman konten */
+/* HALAMAN KONTEN */
 .room-page {
   min-height: calc(100vh - 200px);
   animation: room-page-enter .45s ease-out both;
@@ -573,7 +585,7 @@
   border-top: 1px solid var(--line);
 }
 
-/* Warna beranda */
+/* WARNA BERANDA */
 .room-view {
   background: #0a151f;
 }
@@ -631,42 +643,80 @@
   display: none;
 }
 
-/* Animasi */
+/* ANIMASI */
 @keyframes room-breathe {
-  0%, 100% { transform: translateY(0) rotate(0); }
-  50% { transform: translateY(-2px) rotate(.25deg); }
+  0%, 100% {
+    transform: translateY(0) rotate(0);
+  }
+  50% {
+    transform: translateY(-2px) rotate(.25deg);
+  }
 }
 
 @keyframes room-ring {
-  0%, 64%, 100% { transform: rotate(0); }
-  66%, 70%, 74% { transform: rotate(-8deg); }
-  68%, 72%, 76% { transform: rotate(8deg); }
-  78% { transform: rotate(0); }
+  0%, 64%, 100% {
+    transform: rotate(0);
+  }
+  66%, 70%, 74% {
+    transform: rotate(-8deg);
+  }
+  68%, 72%, 76% {
+    transform: rotate(8deg);
+  }
+  78% {
+    transform: rotate(0);
+  }
 }
 
 @keyframes room-ring-wave {
-  0%, 25% { transform: scale(.8); opacity: 0; }
-  35% { opacity: .55; }
-  90%, 100% { transform: scale(1.5); opacity: 0; }
+  0%, 25% {
+    transform: scale(.8);
+    opacity: 0;
+  }
+  35% {
+    opacity: .55;
+  }
+  90%, 100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
 }
 
 @keyframes room-lamplight {
-  0%, 100% { opacity: .65; }
-  50% { opacity: 1; }
+  0%, 100% {
+    opacity: .65;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 @keyframes room-drift {
-  0% { opacity: 0; transform: translate(0, 0); }
-  20%, 70% { opacity: .3; }
-  100% { opacity: 0; transform: translate(15px, -70px); }
+  0% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+  20%, 70% {
+    opacity: .3;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(15px, -70px);
+  }
 }
 
 @keyframes room-page-enter {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: none; }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
-/* Tablet */
+/* TABLET */
 @media (max-width: 1050px) {
   .room-home {
     padding: 28px 4%;
@@ -719,7 +769,7 @@
   }
 }
 
-/* Ponsel */
+/* PONSEL */
 @media (max-width: 640px) {
   .room-home {
     padding: 26px 4% 32px;
@@ -752,15 +802,24 @@
   }
 
   .board-hotspot {
-    left: 6%; top: 15%; width: 31%; height: 39%;
+    left: 6%;
+    top: 15%;
+    width: 31%;
+    height: 39%;
   }
 
   .research-hotspot {
-    left: 76%; top: 15%; width: 20%; height: 36%;
+    left: 76%;
+    top: 15%;
+    width: 20%;
+    height: 36%;
   }
 
   .character-link {
-    left: 36%; top: 35%; width: 40%; height: 65%;
+    left: 36%;
+    top: 35%;
+    width: 40%;
+    height: 65%;
   }
 
   .room-stage .room-introduction.nest-under-chair {
@@ -776,8 +835,8 @@
   }
 
   .room-stage #games-hotspot {
-    left: 39%;
-    top: 59%;
+    left: 28%;
+    top: 60%;
     width: 11%;
     height: 11%;
   }
@@ -788,7 +847,10 @@
   }
 
   .phone-link {
-    left: 80%; top: 61%; width: 10%; height: 14%;
+    left: 80%;
+    top: 61%;
+    width: 10%;
+    height: 14%;
   }
 
   .phone-label {
@@ -875,7 +937,7 @@
   }
 }
 
-/* Pengurangan gerakan */
+/* PENGURANGAN GERAKAN */
 .motion-reduced .room-phone,
 .motion-reduced .room-character,
 .motion-reduced .room-dust span,
