@@ -8,6 +8,7 @@
   display: none !important;
 }
 
+/* Beranda */
 .room-home {
   max-width: 1600px;
   margin: auto;
@@ -207,7 +208,7 @@
   text-overflow: ellipsis;
 }
 
-/* Karakter Nestiara */
+/* Karakter */
 .character-link {
   left: 37%;
   top: 35%;
@@ -274,18 +275,20 @@
   display: none;
 }
 
-/* Gamepad di atas meja */
-.room-stage .games-hotspot {
+/* Gamepad: atas meja, sebelah kiri laptop */
+.room-stage #games-hotspot {
   position: absolute;
-  left: 41%;
-  top: 78%;
+  left: 39%;
+  top: 59%;
   width: 10%;
-  height: 12%;
+  height: 11%;
   display: block;
+  visibility: visible;
+  opacity: 1;
   border-radius: 10px;
   color: var(--room-ink);
   text-decoration: none;
-  z-index: 9;
+  z-index: 12;
 }
 
 .room-gamepad {
@@ -426,15 +429,19 @@
 .room-dust span:nth-child(1) {
   left: 36%; top: 60%; animation-delay: -3s;
 }
+
 .room-dust span:nth-child(2) {
   left: 43%; top: 65%; animation-delay: -7s;
 }
+
 .room-dust span:nth-child(3) {
   left: 56%; top: 54%; animation-delay: -1s;
 }
+
 .room-dust span:nth-child(4) {
   left: 29%; top: 66%; animation-delay: -9s;
 }
+
 .room-dust span:nth-child(5) {
   left: 64%; top: 70%; animation-delay: -5s;
 }
@@ -768,11 +775,11 @@
     font-size: .6rem;
   }
 
-  .room-stage .games-hotspot {
-    left: 41%;
-    top: 78%;
+  .room-stage #games-hotspot {
+    left: 39%;
+    top: 59%;
     width: 11%;
-    height: 12%;
+    height: 11%;
   }
 
   .gamepad-label {
