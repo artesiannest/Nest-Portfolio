@@ -40,8 +40,8 @@
     );
 
     // Targetkan label mading, bukan caption screenshot.
-    const boardLabel = document.querySelector(
-      '#board-hotspot .hotspot-label small'
+    const boardLabel = document.getElementById(
+  'room-portfolio-count'
     );
 
     if (boardLabel) {
